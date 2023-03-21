@@ -20,7 +20,7 @@
 
           <!-- PASSWORD -->
           <md-field>
-            <label>Password toggle</label>
+            <label>Password</label>
             <md-input v-model="user.password" type="password"></md-input>
           </md-field>
           <!-- /PASSWORD -->
