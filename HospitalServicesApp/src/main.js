@@ -5,8 +5,13 @@ import App from './App'
 import router from './router'
 import model_REST from './services/cli.js'
 
+
 Vue.prototype.$model = model_REST;
-Vue.prototype.$user = {};
+Vue.prototype.$user = {
+  id: '',
+  doctor: false,
+  password: "",
+};
 Vue.config.productionTip = false
 
 import VueMaterial from 'vue-material'

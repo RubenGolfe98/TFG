@@ -1,18 +1,18 @@
 <template>
   <div id="app">
-    <md-app v-if="user.token" md-mode="fixed" md-waterfall>
-      <md-app-content>
-        <router-view></router-view>
-      </md-app-content>
-    </md-app>
+    <DoctorHome v-if="user.token && user.doctor"></DoctorHome>
+    <PacienteHome v-else-if="user.token && !user.doctor"></PacienteHome>
     <Login v-else></Login>
   </div>
 </template>
 
 <script>
 import Login from '@/Login'
+import DoctorHome from '@/DoctorHome'
+import PacienteHome from '@/PacienteHome'
+
 export default {
-  components: {Login},
+  components: { Login, DoctorHome, PacienteHome},
   name: "App",
   data() {
     return {
@@ -21,9 +21,3 @@ export default {
   },
 };
 </script>
-
-<style>
-#app {
-  margin: 20%;
-}
-</style>

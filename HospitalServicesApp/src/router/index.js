@@ -12,7 +12,7 @@ export default new Router({
       component: App
     },{
       path: '*',
-      name: 'App',
+      name: 'AppAll',
       component: App
       
     }

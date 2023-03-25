@@ -1,15 +1,18 @@
 var model = require('./model_mongo');
+const port = 8081;
 const express = require('express');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 let app = express();
+
 app.use(bodyParser.json());
+app.use(cors());
 
 app.use(function (req, res, next) {
     console.log('authorize ' + req.method + ' ' + req.originalUrl);
     
     /* Authorization */
     if ((req.path == '/hospitalServices/sessions' && req.method == 'POST')) {
-        console.log("asdasd")
         next();
     } else if (!req.query.token) res.status(401).send('Token not found');
     else next();
@@ -21,7 +24,7 @@ app.post('/hospitalServices/sessions', function (req, res) {
     if (!req.body.id || !req.body.password)
         res.status(400).send('Parameters missing');
     else {
-        model.login(req.body.id, req.body.password, (err, token, user) => {
+        model.login(req.body.id, req.body.password, req.body.doctor, (err, token, user) => {
             if (err) {
                 console.log(err.stack);
                 res.status(400).send(err);
@@ -32,5 +35,7 @@ app.post('/hospitalServices/sessions', function (req, res) {
     }
 });
 
-console.log("=============[SERVER STARTED]=============")
-app.listen(8081)
+
+app.listen(port, () =>{
+    console.log(`=============[SERVER STARTED p:${port}]=============`);
+});
