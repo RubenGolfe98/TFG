@@ -53,7 +53,7 @@
   
   <script>
 export default {
-  name: "App",
+  name: "DoctorHome",
   data() {
     return {
       menuVisible: false,
@@ -67,3 +67,9 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+  .md-app {
+    height: 100vh;
+  }
+</style>

@@ -1,15 +1,13 @@
 <template>
   <div id="app">
-    <DoctorHome v-if="user.token && user.doctor"></DoctorHome>
-    <PacienteHome v-else-if="user.token && !user.doctor"></PacienteHome>
-    <Login v-else></Login>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import Login from '@/Login'
-import DoctorHome from '@/DoctorHome'
-import PacienteHome from '@/PacienteHome'
+import Login from '@/components/Login'
+import DoctorHome from '@/components/DoctorHome'
+import PacienteHome from '@/components/PacienteHome'
 
 export default {
   components: { Login, DoctorHome, PacienteHome},

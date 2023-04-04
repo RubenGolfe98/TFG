@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="login">
     <md-card>
       <md-card-header>
         <div class="md-title">Login</div>
@@ -43,7 +43,7 @@ import { validationMixin } from "vuelidate";
 import required from "vuelidate/lib/validators";
 
 export default {
-  name: "App",
+  name: "Login",
   mixins: [validationMixin],
   data: () => ({
     loading: false,
@@ -85,7 +85,7 @@ export default {
 </script>
   
   <style>
-#app {
+#login {
   margin: 20%;
 }
 </style>
