@@ -2,6 +2,7 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import App from './App'
+import DoctorHome from '@/components/DoctorHome'
 import router from './router'
 import model_REST from './services/cli.js'
 
@@ -20,10 +21,12 @@ import 'vue-material/dist/theme/default.css' // el tema
 
 Vue.use(VueMaterial)
 
+
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
-  components: { App },
-  template: '<App/>'
+  components: { DoctorHome },
+  template: '<DoctorHome/>'
 })
