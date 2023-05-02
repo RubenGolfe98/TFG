@@ -3,6 +3,7 @@
 import Vue from 'vue'
 import App from './App'
 import DoctorHome from '@/components/DoctorHome'
+import Login from '@/components/Login'
 import router from './router'
 import model_REST from './services/cli.js'
 
@@ -27,6 +28,6 @@ Vue.use(VueMaterial)
 new Vue({
   el: '#app',
   router,
-  components: { DoctorHome },
-  template: '<DoctorHome/>'
+  components: { App },
+  template: '<App/>'
 })

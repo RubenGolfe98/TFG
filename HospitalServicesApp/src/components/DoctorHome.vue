@@ -75,7 +75,7 @@
   </div>
 </template>
   
-  <script>
+<script>
 const toLower = (text) => {
   return text.toString().toLowerCase();
 };

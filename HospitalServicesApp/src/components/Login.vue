@@ -11,7 +11,7 @@
           <!-- ID -->
           <md-field md-inline>
             <label>DNI</label>
-            <md-input v-model="form.id"></md-input>
+            <md-input id="id" v-model="form.id"></md-input>
           </md-field>
           <!-- /ID -->
 
@@ -38,7 +38,7 @@
   </div>
 </template>
   
-  <script>
+<script>
 import { validationMixin } from "vuelidate";
 import required from "vuelidate/lib/validators";
 

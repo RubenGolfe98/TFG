@@ -1,16 +1,16 @@
 <template>
   <div id="app">
-    <router-view></router-view>
+    <Login v-if="!$user.token"></Login>
+    <router-view v-else></router-view>
   </div>
 </template>
 
 <script>
 import Login from '@/components/Login'
-import DoctorHome from '@/components/DoctorHome'
-import PacienteHome from '@/components/PacienteHome'
+
 
 export default {
-  components: { Login, DoctorHome, PacienteHome},
+  components: {Login},
   name: "App",
   data() {
     return {
