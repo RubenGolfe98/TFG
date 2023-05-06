@@ -47,6 +47,19 @@ app.post('/hospitalServices/pacientes', function (req, res) {
     });
 });
 
+//GET PACIENTES
+app.get('/hospitalServices/pacientes', function (req, res) {
+    console.log('list pacientes');
+    model.listaPacientesPorSanitario(req.query.token, req.query.dni, (err, pacientes) => {
+        if (err) {
+            console.log(err.stack);
+            res.status(400).send(err);
+        } else {
+            res.send(pacientes);
+        }
+    });
+});
+
 app.listen(port, () =>{
     console.log(`=============[SERVER STARTED p:${port}]=============`);
 });

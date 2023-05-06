@@ -9,7 +9,7 @@
         >
           <md-icon>menu</md-icon>
         </md-button>
-        <span class="md-title">Paciente {{ user.id }}</span>
+        <span class="md-title">Paciente {{ user.dni }}</span>
       </md-app-toolbar>
 
       <md-app-drawer :md-active.sync="menuVisible" md-persistent="mini">

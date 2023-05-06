@@ -8,12 +8,12 @@
       </md-card-header>
       <md-card-content>
         <div class="form">
-          <!-- ID -->
+          <!-- DNI -->
           <md-field md-inline>
             <label>DNI</label>
-            <md-input id="id" v-model="form.id"></md-input>
+            <md-input id="dni" v-model="form.dni"></md-input>
           </md-field>
-          <!-- /ID -->
+          <!-- /DNI -->
 
           <!-- PASSWORD -->
           <md-field>
@@ -49,7 +49,7 @@ export default {
     loading: false,
     emptyForm: false,
     form: {
-      id: "",
+      dni: "",
       esSanitario: false,
       password: "",
     },
@@ -66,7 +66,7 @@ export default {
       console.log(this.$user);
       console.log("Login");
       this.$model.login(
-        this.form.id,
+        this.form.dni,
         this.form.password,
         this.form.esSanitario,
         (err, token, form) => {

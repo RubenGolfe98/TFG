@@ -38,7 +38,21 @@ function addPaciente(user, cb) {
     }
 }
 
+function getPacientes(token, dni, cb){
+    axios.get(url + '/pacientes',
+        {
+            params: { token: token, dni: dni }
+        })
+        .then(res => {
+            cb(null, res.data)
+        })
+        .catch(err => {
+            cb(err);
+        });
+}
+
 export default{
     login,
-    addPaciente
+    addPaciente,
+    getPacientes
 }

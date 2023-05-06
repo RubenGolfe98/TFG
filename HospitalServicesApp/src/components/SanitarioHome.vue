@@ -12,7 +12,7 @@
           <md-icon>menu</md-icon>
         </md-button>
 
-        <span class="md-title">Sanitario {{ user.id }}</span>
+        <span class="md-title">Sanitario {{ user.dni }}</span>
         <div class="md-toolbar-section-end">
 
         
@@ -145,17 +145,18 @@
               <md-button class="md-primary md-raised">Dar de alta paciente</md-button>
             </md-table-empty-state>
               <md-table-row>
+                <md-table-head>DNI</md-table-head>
                 <md-table-head>Nombre</md-table-head>
-                <md-table-head>Servicio</md-table-head>
+                <md-table-head>Primer apellido</md-table-head>
+                <md-table-head>Segundo apellido</md-table-head>
                 <md-table-head>Fecha de alta</md-table-head>
-                <md-table-head>Fecha de baja</md-table-head>
               </md-table-row>
               <md-table-row slot="md-table-row" slot-scope="{ item }">
                 <md-table-cell md-label="DNI" md-sort-by="dni">{{ item.dni }}</md-table-cell>
                 <md-table-cell md-label="Nombre" md-sort-by="nombre">{{ item.nombre }}</md-table-cell>
-                <md-table-cell md-label="Servicio" md-sort-by="servicio">{{ item.servicio }}</md-table-cell>
+                <md-table-cell md-label="Primer apellido" md-sort-by="apellido1">{{ item.apellido1 }}</md-table-cell>
+                <md-table-cell md-label="Segundo apellido" md-sort-by="apellido2">{{ item.apellido2 }}</md-table-cell>
                 <md-table-cell md-label="Fecha de alta" md-sort-by="fechaDeAlta">{{ item.fechaDeAlta }}</md-table-cell>
-                <md-table-cell md-label="Fecha de baja" md-sort-by="fechaDeBaja">{{ item.fechaDeBaja }}</md-table-cell>
               </md-table-row>
           </md-table>
         </div>
@@ -210,7 +211,10 @@ export default {
         apellido1: "",
         apellido2: "",
         password: "",
-        dni: ""
+        dni: "",
+        esSanitario: false,
+        doctores: [],
+        fechaDeAlta: ""
       },
       pacienteRegistrado: false,
       menuVisible: false,
@@ -218,36 +222,35 @@ export default {
       content: "pacientes",
       search: null,
       searched: [],
-      pacientes: [
-        {
-          id: 1,
-          dni: "12345678A",
-          nombre: "Nombre Paciente1",
-          servicio: "servicio1",
-          fechaDeAlta: "04/04/2023",
-          fechaDeBaja: ""
-        },
-        {
-          id: 2,
-          dni: "87654321A",
-          nombre: "Nombre Paciente2",
-          servicio: "servicio2",
-          fechaDeAlta: "05/04/2023",
-          fechaDeBaja: "08/04/2023"
-        },
-        {
-          id: 3,
-          dni: "85746321C",
-          nombre: "Nombre Paciente3",
-          servicio: "servicio3",
-          fechaDeAlta: "06/04/2023",
-          fechaDeBaja: ""
-        }
-    ],
+      pacientes: [],
     };
   },
+  mounted(){
+    this.obtenerPacientes();
+  },
   methods: {
+    obtenerPacientes(){
+      this.$model.getPacientes(this.user.id, this.user.dni, (err, pacientes) => {
+          if (err) {
+            alert("Error" + err.stack);
+          } else {
+            this.pacientes = pacientes;
+          }
+        });
+    },
+    obtenerFechaActual() {
+      const fecha = new Date();
+
+      const dia = String(fecha.getDate()).padStart(2, '0');
+      const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+      const anio = fecha.getFullYear();
+
+      const fechaActual = `${dia}/${mes}/${anio}`;
+
+      return fechaActual;
+    },
     registrarPaciente(){
+      this.nuevoPaciente.fechaDeAlta = this.obtenerFechaActual();
       this.$model.addPaciente(this.nuevoPaciente,
       (err, token, form) => {
           if (err) {
@@ -266,7 +269,9 @@ export default {
               apellido1: "",
               apellido2: "",
               password: "",
-              dni: ""
+              dni: "",
+              esSanitario: false,
+              doctores: []
       }
     },
     logout(){
