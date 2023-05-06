@@ -9,7 +9,7 @@
         >
           <md-icon>menu</md-icon>
         </md-button>
-        <span class="md-title">Paciente</span>
+        <span class="md-title">Paciente {{ user.id }}</span>
       </md-app-toolbar>
 
       <md-app-drawer :md-active.sync="menuVisible" md-persistent="mini">
@@ -54,6 +54,7 @@
     <script>
 export default {
   name: "PacienteHome",
+  props: ['user'],
   data() {
     return {
       menuVisible: false,

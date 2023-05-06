@@ -12,7 +12,8 @@ app.use(function (req, res, next) {
     console.log('authorize ' + req.method + ' ' + req.originalUrl);
     
     /* Authorization */
-    if ((req.path == '/hospitalServices/sessions' && req.method == 'POST')) {
+    if ((req.path == '/hospitalServices/sessions' && req.method == 'POST')||
+        (req.path == '/hospitalServices/pacientes' && req.method == 'POST')) {
         next();
     } else if (!req.query.token) res.status(401).send('Token not found');
     else next();
@@ -24,7 +25,7 @@ app.post('/hospitalServices/sessions', function (req, res) {
     if (!req.body.id || !req.body.password)
         res.status(400).send('Parameters missing');
     else {
-        model.login(req.body.id, req.body.password, req.body.doctor, (err, token, user) => {
+        model.login(req.body.id, req.body.password, req.body.esSanitario, (err, token, user) => {
             if (err) {
                 console.log(err.stack);
                 res.status(400).send(err);
@@ -35,6 +36,16 @@ app.post('/hospitalServices/sessions', function (req, res) {
     }
 });
 
+// ADD PACIENTE
+app.post('/hospitalServices/pacientes', function (req, res) {
+    console.log('add paciente ' + JSON.stringify(req.body.user));
+    model.addPaciente(req.body.user, (err, user) => {
+        if (err) {
+            console.log(err.stack);
+            res.status(400).send(err);
+        } else res.send(user);
+    });
+});
 
 app.listen(port, () =>{
     console.log(`=============[SERVER STARTED p:${port}]=============`);

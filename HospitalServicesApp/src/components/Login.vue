@@ -23,7 +23,7 @@
           <!-- /PASSWORD -->
 
           <!-- DOCTOR -->
-          <md-switch v-model="form.doctor">Iniciar sesión como Doctor</md-switch
+          <md-switch v-model="form.esSanitario">Iniciar sesión como Sanitario</md-switch
           ><br />
           <!-- /DOCTOR -->
 
@@ -50,7 +50,7 @@ export default {
     emptyForm: false,
     form: {
       id: "",
-      doctor: false,
+      esSanitario: false,
       password: "",
     },
   }),
@@ -68,7 +68,7 @@ export default {
       this.$model.login(
         this.form.id,
         this.form.password,
-        this.form.doctor,
+        this.form.esSanitario,
         (err, token, form) => {
           if (err) {
             alert("Error" + err.stack);

@@ -1,21 +1,21 @@
 <template>
     <div id="home">
-      <DoctorHome v-if="this.$user.doctor"></DoctorHome>
-      <PacienteHome v-else></PacienteHome>
+      <SanitarioHome :user="user" v-if="user.esSanitario"></SanitarioHome>
+      <PacienteHome :user="user" v-else></PacienteHome>
     </div>
-  </template>
+</template>
   
   <script>
-  import DoctorHome from '@/components/DoctorHome'
+  import SanitarioHome from '@/components/SanitarioHome'
   import PacienteHome from '@/components/PacienteHome'
-  import Vue from 'vue'
   
   export default {
-    components: {DoctorHome, PacienteHome},
+    components: {SanitarioHome, PacienteHome},
+    props: ['user'],
     name: "Home",
     data() {
       return {
-        user: this.$user,
+        
       }
     },
   };

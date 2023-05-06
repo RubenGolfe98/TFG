@@ -2,8 +2,6 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue'
 import App from './App'
-import DoctorHome from '@/components/DoctorHome'
-import Login from '@/components/Login'
 import router from './router'
 import model_REST from './services/cli.js'
 
@@ -11,7 +9,7 @@ import model_REST from './services/cli.js'
 Vue.prototype.$model = model_REST;
 Vue.prototype.$user = {
   id: '',
-  doctor: false,
+  esSanitario: false,
   password: "",
 };
 Vue.config.productionTip = false

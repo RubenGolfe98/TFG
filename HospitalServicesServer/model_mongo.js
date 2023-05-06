@@ -5,9 +5,10 @@ const DB_NAME = 'hospitalAlcoy'
 
 const USERS_COLLECTION = 'usuarios'
 
+
+/*
 let cb = (err, res)=>console.log(err? `ERROR: ${err.stack}` : `SUCCESS: ${JSON.stringify(res)}`)
 listaPacientesPorSanitario("64340415b6dd33ef999ec4a5", "75214839C", cb)
-/*
     TESTS
 login("1234","1234", cb)
 listaPacientesPorSanitario("64340415b6dd33ef999ec4a5", "75214839C", cb)
@@ -18,7 +19,7 @@ let user = {dni: "01010101A",
             password: "password"}
 addPaciente(user, cb)
 */
-function login(id, password, doctor, cb) {
+function login(id, password, esSanitario, cb) {
     console.log('login(' + id + ', ' + password + ', ' + cb + ')');
 
     MongoClient.connect(url).then(client => {
@@ -28,12 +29,12 @@ function login(id, password, doctor, cb) {
         }
         let db = client.db(DB_NAME);
         let col = db.collection(USERS_COLLECTION);
-        col.findOne({ id: id, password: password, doctor: doctor.toString()}).then(_user => {
+        col.findOne({ id: id, password: password, esSanitario: esSanitario}).then(_user => {
             if (!_user) _cb(new Error('Wrong authentication'));
             else {
                 _cb(null, _user._id.toHexString(), {
                     id: _user._id.toHexString(), nombre: _user.nombre, apellido1: _user.apellido1,
-                    id: _user.id, apellido2: _user.apellido2, doctor: _user.doctor
+                    id: _user.id, apellido2: _user.apellido2, esSanitario: _user.esSanitario
                 });
             }
         }).catch(err => {

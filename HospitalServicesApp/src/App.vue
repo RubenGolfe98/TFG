@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <Login v-if="!$user.token"></Login>
-    <router-view v-else></router-view>
+    <Login v-if="!user.token"></Login>
+    <router-view :user="user" v-else></router-view>
   </div>
 </template>
 
