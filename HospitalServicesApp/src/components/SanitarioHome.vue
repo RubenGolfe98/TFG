@@ -11,7 +11,7 @@
         >
           <md-icon>menu</md-icon>
         </md-button>
-
+        
         <span class="md-title">Sanitario {{ user.dni }}</span>
         <div class="md-toolbar-section-end">
 
@@ -188,6 +188,8 @@
 </style>
   
 <script>
+import { ref,  watchEffect } from 'vue';
+
 const toLower = (text) => {
   return text.toString().toLowerCase();
 };
@@ -217,11 +219,11 @@ export default {
         fechaDeAlta: ""
       },
       pacienteRegistrado: false,
-      menuVisible: false,
-      titulo: "Lista de pacientes",
-      content: "pacientes",
+      menuVisible: ref(false),
+      titulo: ref("Lista de pacientes"),
+      content: ref("pacientes"),
       search: null,
-      searched: [],
+      searched: ref([]),
       pacientes: [],
     };
   },
@@ -235,6 +237,7 @@ export default {
             alert("Error" + err.stack);
           } else {
             this.pacientes = pacientes;
+            this.searched = this.pacientes;
           }
         });
     },
@@ -295,10 +298,7 @@ export default {
     buscaPaciente() {
     this.searched = searchByDni(this.pacientes, this.search);
   },
-  },
-  created() {
-    this.searched = this.pacientes;
-  },
+  }
 };
 </script>
 
