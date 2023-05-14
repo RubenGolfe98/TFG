@@ -52,9 +52,9 @@
             <span class="md-list-item-text">Pacientes</span>
           </md-list-item>
 
-          <md-list-item @click="cambiaContenido('ajustes')">
-            <md-icon>settings</md-icon>
-            <span class="md-list-item-text">Configuración</span>
+          <md-list-item @click="cambiaContenido('crearServicio')">
+            <md-icon>add</md-icon>
+            <span class="md-list-item-text">Crear Servicio</span>
           </md-list-item>
         </md-list>
         <div class="horizontal-bar">
@@ -63,8 +63,12 @@
       </md-app-drawer>
 
       <md-app-content> 
-        <h1 class="md-title">{{ titulo }}</h1>
-
+        <h1 >{{ titulo }}</h1>
+        <div v-if="content === 'info'">
+          
+        </div>
+        <div v-if="content === 'alarmas'">
+        </div>
         <div v-if="content === 'pacientes'">
           <md-table v-model="searched" md-sort="name" md-sort-order="asc" md-card>
             <md-table-toolbar>
@@ -160,8 +164,21 @@
               </md-table-row>
           </md-table>
         </div>
-        <div v-if="content === 'ajustes'">
-          
+        <div v-if="content === 'crearServicio'">
+          <md-card>
+            <md-card-content>
+              <div class="form">
+
+                <!-- NOMBRE DEL SERVICIO -->
+              <md-field md-inline>
+                <label>Nombre del servicio</label>
+                <md-input id="nombreDelServicio"></md-input>
+              </md-field>
+              <!-- /NOMBRE DEL SERVICIO -->
+
+              </div>
+            </md-card-content>
+          </md-card>
         </div>
       </md-app-content>
       
@@ -285,13 +302,21 @@ export default {
     },
     cambiaContenido(page){
       switch(page) {
+        case 'info':
+          this.titulo = 'Información del sanitario';
+          this.content = 'info';
+          break;
+          case 'alarmas':
+          this.titulo = 'Alarmas';
+          this.content = 'alarmas';
+          break;
         case 'pacientes':
           this.titulo = 'Lista de pacientes activos';
           this.content = 'pacientes';
           break;
-        case 'ajustes':
-          this.titulo = 'Configuración';
-          this.content = 'ajustes';
+        case 'crearServicio':
+          this.titulo = 'Crear Servicio';
+          this.content = 'crearServicio';
           break;
       }
     },

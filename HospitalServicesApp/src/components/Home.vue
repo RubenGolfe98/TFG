@@ -1,7 +1,8 @@
 <template>
     <div id="home">
-      <SanitarioHome :user="user" v-if="user.esSanitario"></SanitarioHome>
-      <PacienteHome :user="user" v-else></PacienteHome>
+      <SanitarioHome v-if="user.esSanitario" :user="user" to="/sanitarioHome"></SanitarioHome>
+      <PacienteHome v-else :user="user" to="/pacienteHome" ></PacienteHome>
+
     </div>
 </template>
   
