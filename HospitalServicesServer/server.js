@@ -39,7 +39,7 @@ app.post('/hospitalServices/sessions', function (req, res) {
 // ADD PACIENTE
 app.post('/hospitalServices/pacientes', function (req, res) {
     console.log('add paciente ' + JSON.stringify(req.body.user));
-    model.addPaciente(req.body.user, (err, user) => {
+    model.addPaciente(req.body.token, req.body.user, (err, user) => {
         if (err) {
             console.log(err.stack);
             res.status(400).send(err);
@@ -56,6 +56,123 @@ app.get('/hospitalServices/pacientes', function (req, res) {
             res.status(400).send(err);
         } else {
             res.send(pacientes);
+        }
+    });
+});
+
+// ADD SERVICIO
+app.post('/hospitalServices/servicios', function (req, res) {
+    console.log('add servicio ' + JSON.stringify(req.body.servicio));
+    model.addServicio(req.body.token, req.body.servicio, req.body.dniSanitario, (err, servicio) => {
+        if (err) {
+            console.log(err.stack);
+            res.status(400).send(err);
+        } else {
+            res.send(servicio);
+        }
+    });
+});
+
+// GET SERVICIOS RESPONSABLES DEL SANITARIO
+app.get('/hospitalServices/sanitarios/:dniSanitario/servicios', function (req, res) {
+    console.log('list servicios responsables del sanitario');
+    model.getServiciosSanitario(req.body.token, req.params.dniSanitario, (err, servicios) => {
+        if (err) {
+            console.log(err.stack);
+            res.status(400).send(err);
+        } else {
+            res.send(servicios);
+        }
+    });
+});
+
+// GET SERVICIOS ASIGNADOS DEL PACIENTE
+app.get('hospitalServices/pacientes/:dniPaciente/servicios/asignados', function (req, res) {
+    console.log('list servicios asignados del paciente');
+    model.getServiciosAsignadosPaciente(req.params.dniPaciente, req.query.opts, (err, servicios) => {
+        if (err) {
+            console.log(err.stack);
+            res.status(400).send(err);
+        } else {
+            res.send(servicios);
+        }
+    });
+});
+
+// ADD SERVICIO ASIGNADO A UN PACIENTE
+app.post('hospitalServices/servicios/asignados', function (req, res) {
+    console.log('add servicio asignado a un paciente' + JSON.stringify(req.body.servicioAsignado));
+    model.addServicioAsignado(req.body.token, req.body.servicioAsignado, (err, servicioAsignado) => {
+        if (err) {
+            console.log(err.stack);
+            res.status(400).send(err);
+        } else {
+            res.send(servicioAsignado);
+        }
+    });
+});
+
+// DELETE SERVICIO ASIGNADO (BORRADO LÓGICO)
+app.put('hospitalServices/servicios/asignados/:idServicioAsignado', function (req, res) {
+    console.log('update servicio asignado' + JSON.stringify(req.params.idServicioAsignado));
+    model.deleteServicioAsignado(req.body.token, req.params.idServicioAsignado, (err, servicioAsignado) => {
+        if (err) {
+            console.log(err.stack);
+            res.status(400).send(err);
+        } else {
+            res.send(servicioAsignado);
+        }
+    });
+});
+
+// ADD MEDICIÓN
+app.post('hospitalServices/servicios/asignados/:idServicioAsignado/mediciones', function (req, res) {
+    console.log('add medición a un servicio asignado' + JSON.stringify(req.params.idServicioAsignado));
+    model.addMedicion(req.body.token, req.body.dniPaciente, req.params.idServicioAsignado, req.body.medicion, (err, medicion) => {
+        if (err) {
+            console.log(err.stack);
+            res.status(400).send(err);
+        } else {
+            res.send(medicion);
+        }
+    });
+});
+
+// DELETE MEDICION
+app.delete('hospitalServices/servicios/asignados/:idServicioAsignado/mediciones', function (req, res) {
+    console.log('delete medición de un servicio asignado' + JSON.stringify(req.params.idServicioAsignado));
+    model.deleteMedicion(req.body.token, req.body.dniPaciente, req.params.idServicioAsignado, req.body.medicion, (err, medicion) => {
+        if (err) {
+            console.log(err.stack);
+            res.status(400).send(err);
+        } else {
+            res.send(medicion);
+        }
+    });
+});
+
+// GET ALARMAS
+app.get('hospitalServices/alarmas', function (req, res) {
+    console.log('get alarmas');
+    model.getAlarmas(req.body.token, req.body.dniSanitario, (err, alarmas) => {
+        if (err) {
+            console.log(err.stack);
+            res.status(400).send(err);
+        } else {
+            res.send(alarmas);
+        }
+    });
+});
+
+// UPDATE ALARMA
+app.put('hospitalServices/alarmas/:idAlarma', function (req, res) {
+    console.log('update alarma' + JSON.stringify(req.params.idAlarma));
+    model.gestionarAlarma(req.body.token, req.body.alarma, (err, alarma) => {
+        if (err) {
+            console.log(err.stack);
+            res.status(400).send(err);
+        } else {
+            res.send(alarma);
         }
     });
 });

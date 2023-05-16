@@ -229,7 +229,7 @@ function getServiciosSanitario(token, dniSanitario, cb){
     }
 }
 
-function getServiciosAsignadosPaciente(dniPaciente, query, cb){
+function getServiciosAsignadosPaciente(dniPaciente, opts, cb){
     if (!dniPaciente) cb(new Error('DNI Paciente missing'));
     else if (!dniPaciente) cb(new Error('Query missing'));
     else{
@@ -243,7 +243,7 @@ function getServiciosAsignadosPaciente(dniPaciente, query, cb){
             let db = client.db(DB_NAME);
             let serviciosAsignados = db.collection(SERVICIOS_ASIGNADOS_COLLECTION);
 
-            serviciosAsignados.find(query).toArray().then(_res =>{
+            serviciosAsignados.find(opts).toArray().then(_res =>{
                 if (!_res) _cb(null, [])
                 else{
                     _cb(null, _res);
@@ -460,9 +460,8 @@ function deleteMedicion(token, dniPaciente, idServicioAsignado, medicion, cb){
     }
 }
 
-function getAlarmas(token, dniSanitario, query){
+function getAlarmas(token, dniSanitario, cb){
     if (!token) cb(new Error('Token missing'));
-    else if(!query) cb(new Error('Query missing'));
     else{
         MongoClient.connect(url).then(client => {
             // create new callback for closing connection
@@ -492,6 +491,8 @@ function getAlarmas(token, dniSanitario, query){
                                     }).catch(err => {
                                         _cb(err)
                                     });
+                                }else{
+                                    _cb(null, [])
                                 }
                             }else{
                                 _cb(new Error('El sanitario no esta realizando seguimientos'));
@@ -511,7 +512,7 @@ function getAlarmas(token, dniSanitario, query){
     }
 }
 
-function gestionarAlarma(token, alarma){
+function gestionarAlarma(token, alarma, cb){
     if (!token) cb(new Error('Token missing'));
     else if (!servicioAsignado) cb(new Error('Servicio asignado missing'));
     else{

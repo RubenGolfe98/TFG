@@ -271,7 +271,7 @@ export default {
     },
     registrarPaciente(){
       this.nuevoPaciente.fechaDeAlta = this.obtenerFechaActual();
-      this.$model.addPaciente(this.nuevoPaciente,
+      this.$model.addPaciente(this.user.id, this.nuevoPaciente,
       (err, token, form) => {
           if (err) {
             alert("Error" + err.stack);
