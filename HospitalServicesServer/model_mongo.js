@@ -105,6 +105,37 @@ function addPaciente(token, user, cb) {
     }
 }
 
+function updatePassword(token, newPassword, cb){
+    if (!token) cb(new Error('Token missing'));
+    else if (!newPassword) cb(new Error('Paswword missing'));
+    else{
+        MongoClient.connect(url).then((client) => {
+            // create new callback for closing connection
+            _cb = function (err, res) {
+                client.close();
+                cb(err, res);
+            }
+            let db = client.db(DB_NAME);
+            let users = db.collection(USERS_COLLECTION);
+
+            users.updateOne({ _id: new mongodb.ObjectId(token) },
+                {
+                    $set: {
+                        "password": newPassword
+                    }
+                }).then(() => {
+                    client.close();
+                    cb();
+                }).catch(err => {
+                    client.close();
+                    cb(err);
+                });
+        }).catch(err => {
+            cb(err);
+        });
+    }
+}
+
 function listaPacientesPorSanitario(token, dni, cb) {
     if (!token) cb(new Error('Token missing'));
     else if (!dni) cb(new Error('DNI sanitario missing'));
@@ -116,7 +147,7 @@ function listaPacientesPorSanitario(token, dni, cb) {
         }
         let db = client.db(DB_NAME);
         let users = db.collection(USERS_COLLECTION);
-        users.findOne({ _id: new mongodb.ObjectId(token) }).then(_sanitario => {
+        users.findOne({ _id: new mongodb.ObjectId(token), esSanitario: true }).then(_sanitario => {
             if (!_sanitario) _cb(new Error('Wrong token'));
             else {
                 users.find({dni: dni}).toArray().then(_result => {
@@ -148,8 +179,61 @@ function listaPacientesPorSanitario(token, dni, cb) {
     });
 }
 
+function getPacientesPorServicioAsignado(token, dniSanitario, idServicio, cb){
+    if (!token) cb(new Error('Token missing'));
+    else if (!dniSanitario) cb(new Error('DNI sanitario missing'));
+    else if (!idServicio) cb(new Error('Servicio missing'));
+    else{
+        MongoClient.connect(url).then(client => {
+            // create new callback for closing connection
+            _cb = function (err, res) {
+                client.close();
+                cb(err, res);
+            }
+            let db = client.db(DB_NAME);
+            let users = db.collection(USERS_COLLECTION);
+
+            users.findOne({ _id: new mongodb.ObjectId(token), esSanitario: true, dni: dniSanitario}).then(_sanitario => {
+                if (!_sanitario) _cb(new Error('Wrong token'));
+                else {
+                    let serviciosAsignados = db.collection(SERVICIOS_ASIGNADOS_COLLECTION);
+                    serviciosAsignados.find({
+                        idServicio: new mongodb.ObjectId(idServicio),
+                        sanitarioResponsable: dniSanitario}, {paciente: 0}).toArray().then(_servAsigns => {
+                            if (!_servAsigns) _cb(null, [])
+                            else {
+                                let pacientes = [];
+                                _servAsigns.forEach((servAsign) => {
+                                    pacientes.push(servAsign.paciente);
+                                });
+                                if(pacientes!=[]){
+                                    users.find({dni: {$in: pacientes}, esSanitario: false}).toArray().then(_res => {
+                                        if (!_res) _cb(null, [])
+                                        else {
+                                            _cb(null, _res);
+                                        }
+                                    }).catch(err => {
+                                        _cb(err)
+                                    });
+                                }else{
+                                    _cb(null, [])
+                                }
+                            }
+                        }).catch(err => {
+                            _cb(err)
+                        });
+                }
+            }).catch(err => {
+                cb(err);
+            });
+        }).catch(err => {
+            cb(err);
+        });
+    }
+}
+
 //---------------------- SERVICIOS
-function addServicio(token, servicio, dniSanitario, cb){
+async function addServicio(token, servicio, dniSanitario, cb){
     if (!token) cb(new Error('Token missing'));
     else if (!servicio.nombre) cb(new Error('Name missing'));
     else if (!servicio.descripcion) cb(new Error('Descripción missing'));
@@ -166,14 +250,15 @@ function addServicio(token, servicio, dniSanitario, cb){
             let servicios = db.collection(SERVICIOS_COLLECTION);
             let users = db.collection(USERS_COLLECTION);
 
-            users.findOne({ _id: new mongodb.ObjectId(token) }).then(_sanitario => {
+            users.findOne({ _id: new mongodb.ObjectId(token) }).then(async _sanitario => {
                 if (!_sanitario) _cb(new Error('Wrong token'));
                 else{
-                    const result = servicios.insertOne(servicio)
+                    const result = await servicios.insertOne(servicio);
+                    console.log(result)
                     users.updateOne({dni:dniSanitario, esSanitario:true}, { $push: { servicios: result.insertedId } }).then(_res =>{
                         if (!_res) _cb(null, [])
                         else{
-                            _cb(null, _res)
+                            _cb(null, result.insertedId)
                         }
                     })
                 }
@@ -555,6 +640,8 @@ function gestionarAlarma(token, alarma, cb){
 module.exports = {
     login,
     listaPacientesPorSanitario,
+    getPacientesPorServicioAsignado,
+    updatePassword,
     addPaciente,
     addServicio,
     getServiciosSanitario,

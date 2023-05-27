@@ -4,23 +4,17 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import model_REST from './services/cli.js'
-
-
-Vue.prototype.$model = model_REST;
-Vue.prototype.$user = {
-  id: '',
-  esSanitario: false,
-  password: "",
-};
-Vue.config.productionTip = false
-
 import VueMaterial from 'vue-material'
 import 'vue-material/dist/vue-material.min.css'
 import 'vue-material/dist/theme/default.css' // el tema
 
-Vue.use(VueMaterial)
 
-
+Vue.prototype.$model = model_REST;
+Vue.prototype.$servicios = [];
+Vue.prototype.$user = {};
+Vue.use(VueMaterial);
+window.Vue = Vue;
+Vue.config.productionTip = false
 
 /* eslint-disable no-new */
 new Vue({

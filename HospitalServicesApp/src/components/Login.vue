@@ -69,16 +69,16 @@ export default {
         this.form.dni,
         this.form.password,
         this.form.esSanitario,
-        (err, token, form) => {
+        (err, token, usuario) => {
           if (err) {
             alert("Error" + err.stack);
           } else {
             this.$set(this.$user, "token", token);
-            for (var att in form) this.$set(this.$user, att, form[att]);
+            for (var att in usuario) this.$set(this.$user, att, usuario[att]);
           }
         }
       );
-      console.log(this.form);
+      console.log("asd "+this.$user.dni);
     },
   },
 };

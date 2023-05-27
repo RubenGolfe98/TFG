@@ -1,9 +1,7 @@
 <template>
   <div id="sanitarioHome">
     <md-app>
-      
       <md-app-toolbar class="md-primary" md-elevation="0">
-
         <md-button
           class="md-icon-button"
           @click="toggleMenu"
@@ -11,18 +9,13 @@
         >
           <md-icon>menu</md-icon>
         </md-button>
-        
+
         <span class="md-title">Sanitario {{ user.dni }}</span>
         <div class="md-toolbar-section-end">
-
-        
-        <md-button
-        class="md-icon-button"
-          @click="logout"
-        >
-          <md-icon>logout</md-icon>
-        </md-button>
-      </div>
+          <md-button class="md-icon-button" @click="logout">
+            <md-icon>logout</md-icon>
+          </md-button>
+        </div>
       </md-app-toolbar>
 
       <md-app-drawer :md-active.sync="menuVisible" md-persistent="mini">
@@ -39,7 +32,10 @@
         <md-list>
           <md-list-item @click="cambiaContenido('info')">
             <md-icon>person</md-icon>
-            <span class="md-list-item-text">{{ user.apellido1 }} {{ user.apellido2 }}, {{ user.nombre }}</span>
+            <span class="md-list-item-text"
+              >{{ user.apellido1 }} {{ user.apellido2 }},
+              {{ user.nombre }}</span
+            >
           </md-list-item>
 
           <md-list-item @click="cambiaContenido('alarmas')">
@@ -60,152 +56,43 @@
         <div class="horizontal-bar">
           <div class="horizontal-bar-item"></div>
         </div>
+
+        <!-- SERVICIOS -->
+        <md-list>
+          <md-list-item @click="servicioSeleccionado(servicio)" v-for="servicio in this.servicios" :key="servicio._id">
+            <md-icon>medical_information</md-icon>
+            <span class="md-list-item-text">{{ servicio.nombre }}</span>
+          </md-list-item>
+        </md-list>
+        <!-- /SERVICIOS -->
       </md-app-drawer>
 
-      <md-app-content> 
-        <h1 >{{ titulo }}</h1>
-        <div v-if="content === 'info'">
-          
-        </div>
-        <div v-if="content === 'alarmas'">
-        </div>
-        <div v-if="content === 'pacientes'">
-          <md-table v-model="searched" md-sort="name" md-sort-order="asc" md-card>
-            <md-table-toolbar>
-              <md-field md-clearable class="md-toolbar-section-start">
-                <md-input placeholder="Buscar por dni..." v-model="search" @input="buscaPaciente" />
-                
-              </md-field>
-              <md-button class="md-icon-button" @click="buscaPaciente" >
-                  <md-icon>search</md-icon>
-              </md-button>
-
-              <!-- DAR DE ALTA PACIENTES -->
-              <md-dialog-alert
-                  :md-active.sync="pacienteRegistrado"
-                  md-title="Paciente registrado!"
-                  :md-content="'El paciente ' + nuevoPaciente.dni + ' ha sido registrado'" 
-                  @md-closed="resetPaciente"/>
-              <md-dialog :md-active.sync="registroPaciente" id="dialog">
-                <md-dialog-title>Dar de alta un paciente</md-dialog-title>
-                <md-avatar class="md-avatar-icon">
-                  <md-icon>person_add</md-icon>
-                </md-avatar>
-                <md-dialog-content>
-                  
-                  <div class="form">
-                    <!-- ID -->
-                    <md-field md-inline>
-                      <label>DNI</label>
-                      <md-input id="id" v-model="nuevoPaciente.dni"></md-input>
-                    </md-field>
-                    <!-- /ID -->
-
-                    <!-- NOMBRE -->
-                    <md-field md-inline>
-                      <label>Nombre</label>
-                      <md-input id="id" v-model="nuevoPaciente.nombre"></md-input>
-                    </md-field>
-                    <!-- /NOMBRE -->
-
-                    <!-- APELLIDO1 -->
-                    <md-field md-inline>
-                      <label>Primer apellido</label>
-                      <md-input id="id" v-model="nuevoPaciente.apellido1"></md-input>
-                    </md-field>
-                    <!-- /APELLIDO1 -->
-
-                    <!-- APELLIDO2 -->
-                    <md-field md-inline>
-                      <label>Segundo apellido</label>
-                      <md-input id="id" v-model="nuevoPaciente.apellido2"></md-input>
-                    </md-field>
-                    <!-- /APELLIDO2 -->
-
-                    <!-- PASSWORD -->
-                    <md-field>
-                      <label>Password</label>
-                      <md-input v-model="nuevoPaciente.password" type="password"></md-input>
-                    </md-field>
-                    <!-- /PASSWORD -->
-
-                    <md-button class="md-primary" @click="registrarPaciente">Registrar paciente</md-button>
-                    <md-button class="md-primary" @click="registroPaciente = false">Cancelar</md-button>
-                  </div>
-                </md-dialog-content>
-              </md-dialog>
-
-              <md-button class="md-icon-button" @click="registroPaciente = true" >
-                  <md-icon>person_add</md-icon>
-              </md-button>
-              
-              <!-- /DAR DE ALTA PACIENTES -->
-
-            </md-table-toolbar>
-            
-            <md-table-empty-state
-              md-label="No se han encontrado pacientes"
-              :md-description="`No se han encontrado pacientes con el dni '${search}'. Revisa el dni o da de alta al paciente.`">
-              <md-button class="md-primary md-raised">Dar de alta paciente</md-button>
-            </md-table-empty-state>
-              <md-table-row>
-                <md-table-head>DNI</md-table-head>
-                <md-table-head>Nombre</md-table-head>
-                <md-table-head>Primer apellido</md-table-head>
-                <md-table-head>Segundo apellido</md-table-head>
-                <md-table-head>Fecha de alta</md-table-head>
-              </md-table-row>
-              <md-table-row slot="md-table-row" slot-scope="{ item }">
-                <md-table-cell md-label="DNI" md-sort-by="dni">{{ item.dni }}</md-table-cell>
-                <md-table-cell md-label="Nombre" md-sort-by="nombre">{{ item.nombre }}</md-table-cell>
-                <md-table-cell md-label="Primer apellido" md-sort-by="apellido1">{{ item.apellido1 }}</md-table-cell>
-                <md-table-cell md-label="Segundo apellido" md-sort-by="apellido2">{{ item.apellido2 }}</md-table-cell>
-                <md-table-cell md-label="Fecha de alta" md-sort-by="fechaDeAlta">{{ item.fechaDeAlta }}</md-table-cell>
-              </md-table-row>
-          </md-table>
-        </div>
-        <div v-if="content === 'crearServicio'">
-          <md-card>
-            <md-card-content>
-              <div class="form">
-
-                <!-- NOMBRE DEL SERVICIO -->
-              <md-field md-inline>
-                <label>Nombre del servicio</label>
-                <md-input id="nombreDelServicio"></md-input>
-              </md-field>
-              <!-- /NOMBRE DEL SERVICIO -->
-
-              </div>
-            </md-card-content>
-          </md-card>
-        </div>
+      <md-app-content>
+        <router-view :user="user"></router-view>
       </md-app-content>
-      
     </md-app>
   </div>
 </template>
-
-<style scoped>
-
-  .md-dialog .md-dialog-container {
-      max-width: 768px;
-  }
-
-  .horizontal-bar {
-    display: flex;
-    width: 100%;
-  }
-
-  .horizontal-bar-item {
-    flex: 1;
-    padding: 3px;
-    background-color: grey;
-  }
-</style>
   
-<script>
-import { ref,  watchEffect } from 'vue';
+  <style scoped>
+.md-dialog .md-dialog-container {
+  max-width: 768px;
+}
+
+.horizontal-bar {
+  display: flex;
+  width: 100%;
+}
+
+.horizontal-bar-item {
+  flex: 1;
+  padding: 3px;
+  background-color: grey;
+}
+</style>
+    
+  <script>
+import { ref, watchEffect } from "vue";
 
 const toLower = (text) => {
   return text.toString().toLowerCase();
@@ -221,114 +108,73 @@ const searchByDni = (items, term) => {
 
 export default {
   name: "SanitarioHome",
-  props: ['user'],
   data() {
     return {
-      registroPaciente: false,
-      nuevoPaciente: {
-        nombre: "",
-        apellido1: "",
-        apellido2: "",
-        password: "",
-        dni: "",
-        esSanitario: false,
-        doctores: [],
-        fechaDeAlta: ""
-      },
-      pacienteRegistrado: false,
-      menuVisible: ref(false),
-      titulo: ref("Lista de pacientes"),
-      content: ref("pacientes"),
-      search: null,
-      searched: ref([]),
-      pacientes: [],
+      user: this.$user,
+      menuVisible: ref(true),
+      servicios: this.$servicios
     };
   },
   mounted(){
-    this.obtenerPacientes();
+    this.getServicios();
   },
   methods: {
-    obtenerPacientes(){
-      this.$model.getPacientes(this.user.id, this.user.dni, (err, pacientes) => {
+    servicioSeleccionado(servicio){
+      this.$router.push({name: "Servicio", params: {idServicioAsignado: servicio.nombre, servicio: servicio}}).catch(err => {
+            console.log(err.name);
+          });
+    },
+    getServicios(){
+      this.$model.getServiciosSanitario(this.user.id, this.user.dni, (err, servicios) => {
           if (err) {
             alert("Error" + err.stack);
           } else {
-            this.pacientes = pacientes;
-            this.searched = this.pacientes;
+            this.$servicios = servicios;
+            this.servicios = this.$servicios;
           }
         });
     },
-    obtenerFechaActual() {
-      const fecha = new Date();
-
-      const dia = String(fecha.getDate()).padStart(2, '0');
-      const mes = String(fecha.getMonth() + 1).padStart(2, '0');
-      const anio = fecha.getFullYear();
-
-      const fechaActual = `${dia}/${mes}/${anio}`;
-
-      return fechaActual;
-    },
-    registrarPaciente(){
-      this.nuevoPaciente.fechaDeAlta = this.obtenerFechaActual();
-      this.$model.addPaciente(this.user.id, this.nuevoPaciente,
-      (err, token, form) => {
-          if (err) {
-            alert("Error" + err.stack);
-          } else {
-            this.pacienteRegistrado = true
-            this.registroPaciente = false
-          }
-        });
-      
-    },
-    resetPaciente(){
-      this.pacienteRegistrado = false;
-      this.nuevoPaciente = {
-              nombre: "",
-              apellido1: "",
-              apellido2: "",
-              password: "",
-              dni: "",
-              esSanitario: false,
-              doctores: []
-      }
-    },
-    logout(){
-      user = {}
+    logout() {
+      this.$user = {};
+      this.$router.go("/home");
     },
     toggleMenu() {
       this.menuVisible = !this.menuVisible;
     },
-    cambiaContenido(page){
-      switch(page) {
-        case 'info':
-          this.titulo = 'Información del sanitario';
-          this.content = 'info';
+    cambiaContenido(page) {
+      switch (page) {
+        case "home":
+          this.$router.push("/home").catch(err => {
+            console.log(err.name);
+          });
+          
           break;
-          case 'alarmas':
-          this.titulo = 'Alarmas';
-          this.content = 'alarmas';
+        case "info":
+        this.$router.push("/sanitario").catch(err => {
+            console.log(err.name);
+          });
           break;
-        case 'pacientes':
-          this.titulo = 'Lista de pacientes activos';
-          this.content = 'pacientes';
+        case "alarmas":
           break;
-        case 'crearServicio':
-          this.titulo = 'Crear Servicio';
-          this.content = 'crearServicio';
+        case "pacientes":
+          this.$router.push("/sanitario/pacientes").catch(err => {
+            console.log(err.name);
+          });
+          break;
+        case "crearServicio":
+        this.$router.push("/sanitario/servicios").catch(err => {
+            console.log(err.name);
+          });
           break;
       }
     },
-    buscaPaciente() {
-    this.searched = searchByDni(this.pacientes, this.search);
   },
-  }
 };
 </script>
-
-<style scoped>
-  .md-app {
-    height: 100vh;
-  }
+  
+  <style scoped>
+.md-app {
+  height: 100vh;
+}
 </style>
+  

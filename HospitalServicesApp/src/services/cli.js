@@ -39,6 +39,20 @@ function addPaciente(token, user, cb) {
     }
 }
 
+function updatePassword(token, password, cb){
+    axios.put(url + '/user/'+token,
+    {
+        token: token,
+        password: password
+    }).then(res => {
+        cb(null, res.data)
+        console.log("Bien")
+    }).catch(err => {
+        console.log("Error")
+        cb(err);
+    });
+}
+
 function getPacientes(token, dni, cb){
     axios.get(url + '/pacientes',
         {
@@ -87,6 +101,17 @@ function addServicioAsignado(token, servicioAsignado, cb){
     axios.post(url + '/servicios/asignados',
     {
         params: { token: token, servicioAsignado: servicioAsignado }
+    }).then(res => {
+        cb(null, res.data)
+    }).catch(err => {
+        cb(err);
+    });
+}
+
+function getPacientesServicioAsignado(token, dniSanitario, idServicioAsignado, cb){
+    axios.get(url + '/servicios/asignados/' + idServicioAsignado,
+    {
+        params: { token: token, dniSanitario: dniSanitario, idServicioAsignado: idServicioAsignado }
     }).then(res => {
         cb(null, res.data)
     }).catch(err => {
@@ -152,11 +177,13 @@ function gestionarAlarma(token, alarma, cb){
 export default{
     login,
     addPaciente,
+    updatePassword,
     getPacientes,
     addServicio,
     getServiciosSanitario,
     getServiciosAsignadosPaciente,
     addServicioAsignado,
+    getPacientesServicioAsignado,
     deleteServicioAsignado,
     addMedicion,
     deleteMedicion,

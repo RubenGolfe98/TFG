@@ -10,12 +10,13 @@ app.use(cors());
 
 app.use(function (req, res, next) {
     console.log('authorize ' + req.method + ' ' + req.originalUrl);
-    
+    console.log(req.query);
+    console.log(req.body);
     /* Authorization */
     if ((req.path == '/hospitalServices/sessions' && req.method == 'POST')||
         (req.path == '/hospitalServices/pacientes' && req.method == 'POST')) {
         next();
-    } else if (!req.query.token) res.status(401).send('Token not found');
+    } else if (!req.query.token && !req.body.token) res.status(401).send('Token not found');
     else next();
 });
 
@@ -47,6 +48,17 @@ app.post('/hospitalServices/pacientes', function (req, res) {
     });
 });
 
+// UPDATE USER
+app.put('/hospitalServices/user/:id', function (req, res) {
+    console.log('update user ' + JSON.stringify(req.body));
+    model.updatePassword(req.body.token, req.body.password, (err, user) => {
+        if (err) {
+            console.log(err.stack);
+            res.status(400).send(err);
+        } else res.send(user);
+    });
+});
+
 //GET PACIENTES
 app.get('/hospitalServices/pacientes', function (req, res) {
     console.log('list pacientes');
@@ -62,8 +74,8 @@ app.get('/hospitalServices/pacientes', function (req, res) {
 
 // ADD SERVICIO
 app.post('/hospitalServices/servicios', function (req, res) {
-    console.log('add servicio ' + JSON.stringify(req.body.servicio));
-    model.addServicio(req.body.token, req.body.servicio, req.body.dniSanitario, (err, servicio) => {
+    console.log('add servicio ' + JSON.stringify(req.body.params.servicio));
+    model.addServicio(req.body.params.token, req.body.params.servicio, req.body.params.dniSanitario, (err, servicio) => {
         if (err) {
             console.log(err.stack);
             res.status(400).send(err);
@@ -76,7 +88,7 @@ app.post('/hospitalServices/servicios', function (req, res) {
 // GET SERVICIOS RESPONSABLES DEL SANITARIO
 app.get('/hospitalServices/sanitarios/:dniSanitario/servicios', function (req, res) {
     console.log('list servicios responsables del sanitario');
-    model.getServiciosSanitario(req.body.token, req.params.dniSanitario, (err, servicios) => {
+    model.getServiciosSanitario(req.query.token, req.query.dniSanitario, (err, servicios) => {
         if (err) {
             console.log(err.stack);
             res.status(400).send(err);
@@ -108,6 +120,21 @@ app.post('hospitalServices/servicios/asignados', function (req, res) {
             res.status(400).send(err);
         } else {
             res.send(servicioAsignado);
+        }
+    });
+});
+
+//GET PACIENTES DE UN SERVICIO ASIGNADO
+app.get('/hospitalServices/servicios/asignados/:idServicioAsignado', function (req, res) {
+    console.log('list pacientes');
+    console.log(req.query)
+    console.log(req.body)
+    model.getPacientesPorServicioAsignado(req.query.token, req.query.dniSanitario, req.query.idServicioAsignado, (err, pacientes) => {
+        if (err) {
+            console.log(err.stack);
+            res.status(400).send(err);
+        } else {
+            res.send(pacientes);
         }
     });
 });
