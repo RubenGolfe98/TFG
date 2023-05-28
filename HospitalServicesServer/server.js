@@ -12,11 +12,12 @@ app.use(function (req, res, next) {
     console.log('authorize ' + req.method + ' ' + req.originalUrl);
     console.log(req.query);
     console.log(req.body);
+
     /* Authorization */
     if ((req.path == '/hospitalServices/sessions' && req.method == 'POST')||
         (req.path == '/hospitalServices/pacientes' && req.method == 'POST')) {
         next();
-    } else if (!req.query.token && !req.body.token) res.status(401).send('Token not found');
+    } else if (!req.query.token && !req.body.token && !req.body.params.token) res.status(401).send('Token not found');
     else next();
 });
 
@@ -99,7 +100,7 @@ app.get('/hospitalServices/sanitarios/:dniSanitario/servicios', function (req, r
 });
 
 // GET SERVICIOS ASIGNADOS DEL PACIENTE
-app.get('hospitalServices/pacientes/:dniPaciente/servicios/asignados', function (req, res) {
+app.get('/hospitalServices/pacientes/:dniPaciente/servicios/asignados', function (req, res) {
     console.log('list servicios asignados del paciente');
     model.getServiciosAsignadosPaciente(req.params.dniPaciente, req.query.opts, (err, servicios) => {
         if (err) {
@@ -112,14 +113,14 @@ app.get('hospitalServices/pacientes/:dniPaciente/servicios/asignados', function 
 });
 
 // ADD SERVICIO ASIGNADO A UN PACIENTE
-app.post('hospitalServices/servicios/asignados', function (req, res) {
+app.post('/hospitalServices/servicios/asignados', function (req, res) {
     console.log('add servicio asignado a un paciente' + JSON.stringify(req.body.servicioAsignado));
-    model.addServicioAsignado(req.body.token, req.body.servicioAsignado, (err, servicioAsignado) => {
+    model.addServicioAsignado(req.body.params.token, req.body.params.servicioAsignado, (err, idPaciente) => {
         if (err) {
             console.log(err.stack);
             res.status(400).send(err);
         } else {
-            res.send(servicioAsignado);
+            res.send(idPaciente);
         }
     });
 });
@@ -140,7 +141,7 @@ app.get('/hospitalServices/servicios/asignados/:idServicioAsignado', function (r
 });
 
 // DELETE SERVICIO ASIGNADO (BORRADO LÓGICO)
-app.put('hospitalServices/servicios/asignados/:idServicioAsignado', function (req, res) {
+app.put('/hospitalServices/servicios/asignados/:idServicioAsignado', function (req, res) {
     console.log('update servicio asignado' + JSON.stringify(req.params.idServicioAsignado));
     model.deleteServicioAsignado(req.body.token, req.params.idServicioAsignado, (err, servicioAsignado) => {
         if (err) {
@@ -153,7 +154,7 @@ app.put('hospitalServices/servicios/asignados/:idServicioAsignado', function (re
 });
 
 // ADD MEDICIÓN
-app.post('hospitalServices/servicios/asignados/:idServicioAsignado/mediciones', function (req, res) {
+app.post('/hospitalServices/servicios/asignados/:idServicioAsignado/mediciones', function (req, res) {
     console.log('add medición a un servicio asignado' + JSON.stringify(req.params.idServicioAsignado));
     model.addMedicion(req.body.token, req.body.dniPaciente, req.params.idServicioAsignado, req.body.medicion, (err, medicion) => {
         if (err) {
@@ -166,7 +167,7 @@ app.post('hospitalServices/servicios/asignados/:idServicioAsignado/mediciones', 
 });
 
 // DELETE MEDICION
-app.delete('hospitalServices/servicios/asignados/:idServicioAsignado/mediciones', function (req, res) {
+app.delete('/hospitalServices/servicios/asignados/:idServicioAsignado/mediciones', function (req, res) {
     console.log('delete medición de un servicio asignado' + JSON.stringify(req.params.idServicioAsignado));
     model.deleteMedicion(req.body.token, req.body.dniPaciente, req.params.idServicioAsignado, req.body.medicion, (err, medicion) => {
         if (err) {
@@ -179,7 +180,7 @@ app.delete('hospitalServices/servicios/asignados/:idServicioAsignado/mediciones'
 });
 
 // GET ALARMAS
-app.get('hospitalServices/alarmas', function (req, res) {
+app.get('/hospitalServices/alarmas', function (req, res) {
     console.log('get alarmas');
     model.getAlarmas(req.body.token, req.body.dniSanitario, (err, alarmas) => {
         if (err) {
@@ -192,7 +193,7 @@ app.get('hospitalServices/alarmas', function (req, res) {
 });
 
 // UPDATE ALARMA
-app.put('hospitalServices/alarmas/:idAlarma', function (req, res) {
+app.put('/hospitalServices/alarmas/:idAlarma', function (req, res) {
     console.log('update alarma' + JSON.stringify(req.params.idAlarma));
     model.gestionarAlarma(req.body.token, req.body.alarma, (err, alarma) => {
         if (err) {

@@ -1,7 +1,7 @@
 <template>
     <div id="pacientes">
       <h1>Lista de pacientes activos</h1>
-        <md-table v-model="searched" md-sort="name" md-sort-order="asc" md-card>
+        <md-table v-model="searched" @md-selected="abrirHistoricoPaciente" md-sort="name" md-sort-order="asc" md-card>
               <md-table-toolbar>
                 <md-field md-clearable class="md-toolbar-section-start">
                   <md-input placeholder="Buscar por dni..." v-model="search" @input="buscaPaciente" />
@@ -86,7 +86,7 @@
                   <md-table-head>Segundo apellido</md-table-head>
                   <md-table-head>Fecha de alta</md-table-head>
                 </md-table-row>
-                <md-table-row slot="md-table-row" slot-scope="{ item }">
+                <md-table-row slot="md-table-row" slot-scope="{ item }" md-selectable="single">
                   <md-table-cell md-label="DNI" md-sort-by="dni">{{ item.dni }}</md-table-cell>
                   <md-table-cell md-label="Nombre" md-sort-by="nombre">{{ item.nombre }}</md-table-cell>
                   <md-table-cell md-label="Primer apellido" md-sort-by="apellido1">{{ item.apellido1 }}</md-table-cell>
@@ -98,7 +98,7 @@
 </template>
 
 <script>
-import { ref,  watchEffect } from 'vue';
+import { ref } from 'vue';
 
 const toLower = (text) => {
   return text.toString().toLowerCase();
@@ -138,6 +138,11 @@ export default {
     this.obtenerPacientes();
   },
   methods: {
+    abrirHistoricoPaciente(pacienteSeleccionado){
+      this.$router.push({name: "HistoricoPaciente", params: {dniPaciente: pacienteSeleccionado.dni, pacienteSel: pacienteSeleccionado}}).catch(err => {
+            console.log(err.name);
+          });
+    },
     obtenerPacientes(){
       this.$model.getPacientes(this.user.id, this.user.dni, (err, pacientes) => {
           if (err) {

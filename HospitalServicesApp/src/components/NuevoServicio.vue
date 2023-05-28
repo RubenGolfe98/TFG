@@ -80,6 +80,7 @@ export default {
             this.servicioRegistrado = true
             this.servicio["_id"] = res;
             this.$servicios.push(this.servicio);
+            this.$emit('actualizaServicios');
           }
         });
 

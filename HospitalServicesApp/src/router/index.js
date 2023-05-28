@@ -7,6 +7,7 @@ import Pacientes from '@/components/Pacientes'
 import NuevoServicio from '@/components/NuevoServicio'
 import Servicio from '@/components/Servicio'
 import User from '@/components/User'
+import HistoricoPaciente from '@/components/HistoricoPaciente'
 
 Vue.use(Router)
 
@@ -25,6 +26,11 @@ export default new Router({
       path: '/sanitario/pacientes',
       name: 'Pacientes',
       component: Pacientes
+    },
+    {
+      path: '/sanitario/pacientes/:dniPaciente',
+      name: 'HistoricoPaciente',
+      component: HistoricoPaciente
     },
     {
       path: '/sanitarioHome',

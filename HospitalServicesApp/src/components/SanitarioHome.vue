@@ -130,9 +130,12 @@ export default {
             alert("Error" + err.stack);
           } else {
             this.$servicios = servicios;
-            this.servicios = this.$servicios;
+            this.actualizaServicios();
           }
         });
+    },
+    actualizaServicios(){
+      this.servicios = this.$servicios;
     },
     logout() {
       this.$user = {};
