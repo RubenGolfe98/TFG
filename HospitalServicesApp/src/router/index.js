@@ -8,6 +8,8 @@ import NuevoServicio from '@/components/NuevoServicio'
 import Servicio from '@/components/Servicio'
 import User from '@/components/User'
 import HistoricoPaciente from '@/components/HistoricoPaciente'
+import ServicioAsignadoInfo from '@/components/ServicioAsignadoInfo'
+import MedicionesServicio from '@/components/MedicionesServicio'
 
 Vue.use(Router)
 
@@ -31,6 +33,11 @@ export default new Router({
       path: '/sanitario/pacientes/:dniPaciente',
       name: 'HistoricoPaciente',
       component: HistoricoPaciente
+    },
+    {
+      path: '/sanitario/pacientes/:dniPaciente/:idServicioAsignado',
+      name: 'ServicioAsignadoInfo',
+      component: ServicioAsignadoInfo
     },
     {
       path: '/sanitarioHome',
@@ -61,6 +68,11 @@ export default new Router({
       path: '/paciente',
       name: 'Paciente',
       component: User
+    },
+    {
+      path: '/paciente/servicios/:idServicio',
+      name: 'MedicionesServicio',
+      component: MedicionesServicio
     },
     {
       path: '*',

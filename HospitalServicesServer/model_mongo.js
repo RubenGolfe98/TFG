@@ -8,9 +8,9 @@ const SERVICIOS_COLLECTION = 'servicios'
 const SERVICIOS_ASIGNADOS_COLLECTION = 'serviciosAsignados'
 const ALARMAS_COLLECTION = 'alarmas'
 
-//getServiciosAsignadosPaciente("12345678A",{activo: true}, cb);
 /*
 let cb = (err, res)=>console.log(err? `ERROR: ${err.stack}` : `SUCCESS: ${JSON.stringify(res)}`)
+getServiciosAsignadosPaciente('640c4fbc5fa94d58cf9f39bc', '12345678A', {activo: 'true'}, cb);
 pacientes = listaPacientesPorSanitario("640c50505fa94d58cf9f39bd", "87654321B", cb)
     TESTS
 login("1234","1234", cb)
@@ -316,8 +316,43 @@ function getServiciosSanitario(token, dniSanitario, cb) {
     }
 }
 
-function getServiciosAsignadosPaciente(dniPaciente, opts, cb) {
-    if (!dniPaciente) cb(new Error('DNI Paciente missing'));
+function getServicioAsignadoPaciente(token, dniPaciente, idServicio, cb){
+    if (!token) cb(new Error('Token missing'));
+    else if (!dniPaciente) cb(new Error('DNI Paciente missing'));
+    else if (!idServicio) cb(new Error('idServicio Paciente missing'));
+    else{
+        MongoClient.connect(url).then(client => {
+            // create new callback for closing connection
+            _cb = function (err, res) {
+                client.close();
+                cb(err, res);
+            }
+
+            let db = client.db(DB_NAME);
+            let serviciosAsignados = db.collection(SERVICIOS_ASIGNADOS_COLLECTION);
+            let idServ = new mongodb.ObjectId(idServicio);
+            serviciosAsignados.findOne({paciente: dniPaciente, servicio: idServ}).then(
+                (_servicioAsignado) => {
+                    let servicios = db.collection(SERVICIOS_COLLECTION);
+                    servicios.findOne({ _id: _servicioAsignado.servicio }).then(_servicio => {
+                        _servicioAsignado.servicio = _servicio;
+                        _cb(null, _servicioAsignado);
+                    }).catch(err => {
+                        cb(err);
+                    });
+                    
+                }).catch(err => {
+                    cb(err);
+                });
+        }).catch(err => {
+            cb(err);
+        });
+    }
+}
+
+function getServiciosAsignadosPaciente(token, dniPaciente, opts, cb) {
+    if (!token) cb(new Error('Token missing'));
+    else if (!dniPaciente) cb(new Error('DNI Paciente missing'));
     else if (!opts) cb(new Error('Query missing'));
     else {
         MongoClient.connect(url).then(client => {
@@ -330,18 +365,23 @@ function getServiciosAsignadosPaciente(dniPaciente, opts, cb) {
             let db = client.db(DB_NAME);
             let serviciosAsignados = db.collection(SERVICIOS_ASIGNADOS_COLLECTION);
             opts["paciente"] = dniPaciente;
+
             serviciosAsignados.find(opts).toArray().then(_res => {
                 if (!_res) _cb(null, [])
                 else {
                     let servicios = db.collection(SERVICIOS_COLLECTION);
                     let resultado = _res;
-                    resultado.forEach((servicioAsignado) => {
-                        servicios.findOne({_id: servicioAsignado.servicio}).then((_servicio) => {
+                    let promises = resultado.map(servicioAsignado => {
+                        return servicios.findOne({ _id: servicioAsignado.servicio }).then(_servicio => {
                             servicioAsignado.servicio = _servicio;
                         });
-                      });
-                    _cb(null, resultado);
+                    });
+
+                    Promise.all(promises).then(() => {
+                        _cb(null, resultado);
+                    });
                 }
+                
             }).catch(err => {
                 _cb(err);
             });
@@ -450,7 +490,9 @@ function addMedicion(token, dniPaciente, idServicioAsignado, medicion, cb) {
     else if (!medicion.valor) cb(new Error('Valor de la medición missing'));
     else if (!medicion.fecha) cb(new Error('Fecha de la medición missing'));
     else {
+        medicion["valor"] = Number(medicion["valor"]);
         medicion["alarma"] = false;
+        medicion["fecha"] = new Date(medicion["fecha"]);
         MongoClient.connect(url).then(client => {
             // create new callback for closing connection
             _cb = function (err, res) {
@@ -461,7 +503,7 @@ function addMedicion(token, dniPaciente, idServicioAsignado, medicion, cb) {
             let db = client.db(DB_NAME);
             let users = db.collection(USERS_COLLECTION);
 
-            users.findOne({ _id: new mongodb.ObjectId(token), paciente: dniPaciente, esSanitario: false }).then(
+            users.findOne({ _id: new mongodb.ObjectId(token), dni: dniPaciente, esSanitario: false }).then(
                 (_paciente) => {
                     if (_paciente) {
                         let serviciosAsignados = db.collection(SERVICIOS_ASIGNADOS_COLLECTION);
@@ -484,7 +526,7 @@ function addMedicion(token, dniPaciente, idServicioAsignado, medicion, cb) {
                                     serviciosAsignados.updateOne({ _id: new mongodb.ObjectId(idServicioAsignado) }, { $push: { mediciones: medicion } }).then(_res => {
                                         if (!_res) _cb(null, [])
                                         else {
-                                            _cb(null, _res)
+                                            _cb(null, medicion)
                                         }
                                     })
                                 } else {
@@ -657,6 +699,7 @@ module.exports = {
     addPaciente,
     addServicio,
     getServiciosSanitario,
+    getServicioAsignadoPaciente,
     getServiciosAsignadosPaciente,
     addServicioAsignado,
     deleteServicioAsignado,

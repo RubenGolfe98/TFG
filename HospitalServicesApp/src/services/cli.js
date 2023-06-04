@@ -48,7 +48,7 @@ function updatePassword(token, password, cb){
         cb(null, res.data)
         console.log("Bien")
     }).catch(err => {
-        console.log("Error")
+        console.log(err)
         cb(err);
     });
 }
@@ -86,10 +86,10 @@ function getServiciosSanitario(token, dniSanitario, cb){
     });
 }
 
-function getServiciosAsignadosPaciente(dniPaciente, opts, cb){
+function getServiciosAsignadosPaciente(token, dniPaciente, opts, cb){
     axios.get(url + '/pacientes/' + dniPaciente + '/servicios/asignados',
     {
-        params: { dniPaciente: dniPaciente, opts: opts }
+        params: { token: token, dniPaciente: dniPaciente, opts: opts }
     }).then(res => {
         cb(null, res.data)
     }).catch(err => {
@@ -112,6 +112,17 @@ function getPacientesServicioAsignado(token, dniSanitario, idServicioAsignado, c
     axios.get(url + '/servicios/asignados/' + idServicioAsignado,
     {
         params: { token: token, dniSanitario: dniSanitario, idServicioAsignado: idServicioAsignado }
+    }).then(res => {
+        cb(null, res.data)
+    }).catch(err => {
+        cb(err);
+    });
+}
+
+function getServicioAsignado(token, paciente, servicio, cb){
+    axios.get(url + '/servicios/asignados/' + servicio + '/' +paciente,
+    {
+        params: { token: token, paciente: paciente,  servicio: servicio }
     }).then(res => {
         cb(null, res.data)
     }).catch(err => {
@@ -183,6 +194,7 @@ export default{
     getServiciosSanitario,
     getServiciosAsignadosPaciente,
     addServicioAsignado,
+    getServicioAsignado,
     getPacientesServicioAsignado,
     deleteServicioAsignado,
     addMedicion,

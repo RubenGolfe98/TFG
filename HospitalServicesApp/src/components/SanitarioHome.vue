@@ -20,7 +20,7 @@
 
       <md-app-drawer :md-active.sync="menuVisible" md-persistent="mini">
         <md-toolbar class="md-transparent" md-elevation="0">
-          <span>Navigation</span>
+          <span>Navegación</span>
 
           <div class="md-toolbar-section-end">
             <md-button class="md-icon-button md-dense" @click="toggleMenu">
@@ -75,8 +75,8 @@
 </template>
   
   <style scoped>
-.md-dialog .md-dialog-container {
-  max-width: 768px;
+.md-app {
+height: 100vh;
 }
 
 .horizontal-bar {
@@ -96,14 +96,6 @@ import { ref, watchEffect } from "vue";
 
 const toLower = (text) => {
   return text.toString().toLowerCase();
-};
-
-const searchByDni = (items, term) => {
-  if (term) {
-    return items.filter((item) => toLower(item.dni).includes(toLower(term)));
-  }
-
-  return items;
 };
 
 export default {
@@ -139,7 +131,9 @@ export default {
     },
     logout() {
       this.$user = {};
-      this.$router.go("/home");
+      this.$servicios = [];
+      this.cambiaContenido("home");
+      this.$router.go();
     },
     toggleMenu() {
       this.menuVisible = !this.menuVisible;
@@ -174,10 +168,5 @@ export default {
   },
 };
 </script>
-  
-  <style scoped>
-.md-app {
-  height: 100vh;
-}
-</style>
-  
+
+</script>

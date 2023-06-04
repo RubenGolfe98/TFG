@@ -1,7 +1,7 @@
 <template>
     <div id="historicoPaciente">
       <h1>Histórico del paciente {{ $route.params.pacienteSel.dni }}</h1>
-      <h2>Información</h2>
+        <h2>Información</h2>
       <md-card>
       <md-card-header class="text-center">
         <div class="centered-icon">
@@ -90,6 +90,11 @@
   </template>
   
   <style>
+  .centered-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
   .icon-container {
     display: flex;
     justify-content: center;
@@ -105,6 +110,13 @@
   </style>
 
   <script>
+const searchByServicio = (items, term) => {
+  if (term) {
+    return items.filter((item) => toLower(item.servicio.nombre).includes(toLower(term)));
+  }
+
+  return items;
+};
 
 import { ref } from 'vue';
 
@@ -114,15 +126,36 @@ import { ref } from 'vue';
     data() {
       return {
         search: null,
-        searched: ref([{servicio:{nombre: "Cardiología"}, sanitarioResponsable: "12345678A", fechaAlta: "", fechaBaja: ""}]),
+        serviciosAsignados: [],
+        searched: ref([]),
       };
     },
+    mounted(){
+      this.getServiciosAsignadosPaciente();
+    },
     methods: {
-      buscaServicio() {
-
+      getServiciosAsignadosPaciente(){
+        this.$model.getServiciosAsignadosPaciente(this.$route.params.pacienteSel._id, this.$route.params.pacienteSel.dni, {}, (err, serviciosAsignados) => {
+          if (err) {
+            alert("Error" + err.stack);
+          } else {
+            this.serviciosAsignados = serviciosAsignados;
+            this.searched = this.serviciosAsignados;
+          }
+        });
       },
-      abrirHistoricoServicioAsignado(){
-
+      buscaServicio() {
+        this.searched = searchByServicio(this.serviciosAsignados,this.search);
+      },
+      abrirHistoricoServicioAsignado(servicioAsignado){
+        this.$router.push({name: "ServicioAsignadoInfo", params: {
+          dniPaciente: this.$route.params.pacienteSel.dni, 
+          idServicioAsignado: servicioAsignado.servicio.nombre, 
+          pacienteSel: this.$route.params.pacienteSel,
+          servicioAsignado: servicioAsignado
+        }}).catch(err => {
+            console.log(err.name);
+          });
       }
     },
   };

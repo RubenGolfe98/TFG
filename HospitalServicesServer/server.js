@@ -102,7 +102,11 @@ app.get('/hospitalServices/sanitarios/:dniSanitario/servicios', function (req, r
 // GET SERVICIOS ASIGNADOS DEL PACIENTE
 app.get('/hospitalServices/pacientes/:dniPaciente/servicios/asignados', function (req, res) {
     console.log('list servicios asignados del paciente');
-    model.getServiciosAsignadosPaciente(req.params.dniPaciente, req.query.opts, (err, servicios) => {
+    let opciones = {}
+    if(req.query.opts != undefined && 'activo' in req.query.opts && req.query.opts["activo"] == 'true'){
+        opciones = {activo: true}
+    }
+    model.getServiciosAsignadosPaciente(req.query.token, req.params.dniPaciente, opciones, (err, servicios) => {
         if (err) {
             console.log(err.stack);
             res.status(400).send(err);
@@ -125,11 +129,22 @@ app.post('/hospitalServices/servicios/asignados', function (req, res) {
     });
 });
 
+//GET SERVICIO ASIGNADO X PACIENTE Y SERVICIO
+app.get('/hospitalServices/servicios/asignados/:servicio/:paciente', function (req, res) {
+    console.log('getServicioAsignado');
+    model.getServicioAsignadoPaciente(req.query.token, req.query.paciente, req.query.servicio, (err, servicioAsignado) => {
+        if (err) {
+            console.log(err.stack);
+            res.status(400).send(err);
+        } else {
+            res.send(servicioAsignado);
+        }
+    });
+});
+
 //GET PACIENTES DE UN SERVICIO ASIGNADO
 app.get('/hospitalServices/servicios/asignados/:idServicioAsignado', function (req, res) {
     console.log('list pacientes');
-    console.log(req.query)
-    console.log(req.body)
     model.getPacientesPorServicioAsignado(req.query.token, req.query.dniSanitario, req.query.idServicioAsignado, (err, pacientes) => {
         if (err) {
             console.log(err.stack);
@@ -156,7 +171,7 @@ app.put('/hospitalServices/servicios/asignados/:idServicioAsignado', function (r
 // ADD MEDICIÓN
 app.post('/hospitalServices/servicios/asignados/:idServicioAsignado/mediciones', function (req, res) {
     console.log('add medición a un servicio asignado' + JSON.stringify(req.params.idServicioAsignado));
-    model.addMedicion(req.body.token, req.body.dniPaciente, req.params.idServicioAsignado, req.body.medicion, (err, medicion) => {
+    model.addMedicion(req.body.params.token, req.body.params.dniPaciente, req.body.params.idServicioAsignado, req.body.params.medicion, (err, medicion) => {
         if (err) {
             console.log(err.stack);
             res.status(400).send(err);

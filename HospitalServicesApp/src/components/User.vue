@@ -94,7 +94,7 @@ export default {
           if (err) {
             alert("Error" + err.stack);
           }else{
-            passwordRegistrada = true;
+            this.passwordRegistrada = true;
           }
         }
       );

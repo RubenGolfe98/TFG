@@ -2,7 +2,7 @@
   <div id="servicio">
     <h1>Servicio de {{ $route.params.servicio.nombre }}</h1>
     <h4>{{ $route.params.servicio.descripcion }}</h4>
-    <md-table v-model="searched" md-sort="name" md-sort-order="asc" md-card>
+    <md-table v-model="searched" @md-selected="abrirHistoricoServicioAsignado" md-sort="name" md-sort-order="asc" md-card>
       <md-table-toolbar>
         <md-field md-clearable class="md-toolbar-section-start">
           <md-input
@@ -110,7 +110,7 @@
         <md-table-head>Segundo apellido</md-table-head>
         <md-table-head>Fecha de alta</md-table-head>
       </md-table-row>
-      <md-table-row slot="md-table-row" slot-scope="{ item }">
+      <md-table-row slot="md-table-row" slot-scope="{ item }" md-selectable="single">
         <md-table-cell md-label="DNI" md-sort-by="dni">{{
           item.dni
         }}</md-table-cell>
@@ -194,6 +194,22 @@ export default {
     this.obtenerserviciosAsignados();
   },
   methods: {
+    abrirHistoricoServicioAsignado(paciente){
+      this.$model.getServicioAsignado(paciente._id, paciente.dni, this.$route.params.servicio._id, (err, servicioAsignado) => {
+          if (err) {
+            alert("Error" + err.stack);
+          } else {
+            this.$router.push({name: "ServicioAsignadoInfo", params: {
+              dniPaciente: paciente.dni, 
+              idServicioAsignado: servicioAsignado.servicio.nombre, 
+              pacienteSel: paciente,
+              servicioAsignado: servicioAsignado
+            }}).catch(err => {
+                console.log(err.name);
+              });
+          }
+        });
+      },
     obtenerserviciosAsignados() {
       console.log("Hola");
       this.$model.getPacientesServicioAsignado(
@@ -207,8 +223,7 @@ export default {
             this.serviciosAsignados = serviciosAsignados;
             this.searched = this.serviciosAsignados;
           }
-        }
-      );
+        });
     },
     obtenerFechaActual() {
       const fecha = new Date();
@@ -239,8 +254,7 @@ export default {
             this.servicioAsignadoRegistrado = true;
             this.registroServicioAsignado = false;
           }
-        }
-      );
+        });
     },
     resetServicioAsignado() {
       this.servicioAsignadoRegistrado = false;
