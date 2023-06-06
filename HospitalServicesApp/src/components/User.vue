@@ -56,9 +56,9 @@
             <label>Password</label>
             <md-input v-model="newPassword" type="password"></md-input>
           </md-field>
-          <md-button class="md-raised md-accent" @click="cambiarPassword"
-            >Cambiar contraseña</md-button
-          >
+          <div class="button-container">
+            <md-button class="md-raised md-accent" @click="cambiarPassword">Cambiar contraseña</md-button>
+          </div>
           <!-- /PASSWORD -->
         </div>
       </md-card-content>

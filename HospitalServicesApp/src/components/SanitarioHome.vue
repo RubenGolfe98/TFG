@@ -53,13 +53,14 @@
             <span class="md-list-item-text">Crear Servicio</span>
           </md-list-item>
         </md-list>
+        
         <div class="horizontal-bar">
           <div class="horizontal-bar-item"></div>
         </div>
 
         <!-- SERVICIOS -->
         <md-list>
-          <md-list-item @click="servicioSeleccionado(servicio)" v-for="servicio in this.servicios" :key="servicio._id">
+          <md-list-item @click="servicioSeleccionado(servicio)" v-for="servicio in servicios" :key="servicio._id">
             <md-icon>medical_information</md-icon>
             <span class="md-list-item-text">{{ servicio.nombre }}</span>
           </md-list-item>
@@ -68,7 +69,7 @@
       </md-app-drawer>
 
       <md-app-content>
-        <router-view :user="user"></router-view>
+        <router-view @addServicioEvent="addServicio" :servicio="servicioSelected"></router-view>
       </md-app-content>
     </md-app>
   </div>
@@ -92,7 +93,7 @@ height: 100vh;
 </style>
     
   <script>
-import { ref, watchEffect } from "vue";
+import { ref } from "vue";
 
 const toLower = (text) => {
   return text.toString().toLowerCase();
@@ -104,7 +105,8 @@ export default {
     return {
       user: this.$user,
       menuVisible: ref(true),
-      servicios: this.$servicios
+      servicios: [],
+      servicioSelected: {}
     };
   },
   mounted(){
@@ -112,26 +114,27 @@ export default {
   },
   methods: {
     servicioSeleccionado(servicio){
-      this.$router.push({name: "Servicio", params: {idServicioAsignado: servicio.nombre, servicio: servicio}}).catch(err => {
+      this.servicioSelected = servicio;
+      this.$router.push({name: "Servicio", params: {idServicioAsignado: servicio.nombre}}).catch(err => {
             console.log(err.name);
           });
     },
     getServicios(){
-      this.$model.getServiciosSanitario(this.user.id, this.user.dni, (err, servicios) => {
+      console.log("USUARIO G: "+this.$user.dni);
+      this.$model.getServiciosSanitario(this.$user.id, this.$user.dni, (err, servicios) => {
           if (err) {
             alert("Error" + err.stack);
           } else {
-            this.$servicios = servicios;
-            this.actualizaServicios();
+            this.servicios = servicios;
           }
         });
     },
-    actualizaServicios(){
-      this.servicios = this.$servicios;
+    addServicio(servicio){
+      this.servicios.push(servicio);
     },
     logout() {
+      localStorage.removeItem('user');
       this.$user = {};
-      this.$servicios = [];
       this.cambiaContenido("home");
       this.$router.go();
     },

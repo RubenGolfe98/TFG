@@ -114,7 +114,6 @@ const searchByDni = (items, term) => {
 
 export default {
   name: "Servicio",
-  props: ['user'],
   data() {
     return {
       registroPaciente: false,
@@ -144,7 +143,7 @@ export default {
           });
     },
     obtenerPacientes(){
-      this.$model.getPacientes(this.user.id, this.user.dni, (err, pacientes) => {
+      this.$model.getPacientes(this.$user.id, this.$user.dni, (err, pacientes) => {
           if (err) {
             alert("Error" + err.stack);
           } else {
@@ -166,7 +165,7 @@ export default {
     },
     registrarPaciente(){
       this.nuevoPaciente.fechaDeAlta = this.obtenerFechaActual();
-      this.$model.addPaciente(this.user.id, this.nuevoPaciente,
+      this.$model.addPaciente(this.$user.id, this.nuevoPaciente,
       (err, token, form) => {
           if (err) {
             alert("Error" + err.stack);

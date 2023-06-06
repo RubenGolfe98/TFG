@@ -10,7 +10,6 @@ import 'vue-material/dist/theme/default.css' // el tema
 
 
 Vue.prototype.$model = model_REST;
-Vue.prototype.$servicios = [];
 Vue.prototype.$user = {};
 Vue.use(VueMaterial);
 window.Vue = Vue;

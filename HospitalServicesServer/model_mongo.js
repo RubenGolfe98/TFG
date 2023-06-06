@@ -459,14 +459,15 @@ function deleteServicioAsignado(token, idServicioAsignado, cb) {
             let db = client.db(DB_NAME);
             let users = db.collection(USERS_COLLECTION);
 
-            users.findOne({ _id: new mongodb.ObjectId(token), dni: dniSanitario, esSanitario: true }).then(
+            users.findOne({ _id: new mongodb.ObjectId(token), esSanitario: true }).then(
                 (_sanitario) => {
                     if (_sanitario) {
                         let serviciosAsignados = db.collection(SERVICIOS_ASIGNADOS_COLLECTION);
-                        serviciosAsignados.updateOne({ _id: idServicioAsignado }, { activo: false, fechaBaja: baja }).then(_res => {
+                        let idServicioAsignadoObj = new mongodb.ObjectId(idServicioAsignado);
+                        serviciosAsignados.updateOne({ _id: idServicioAsignadoObj }, {$set: { activo: false, fechaBaja: baja }}).then(_res => {
                             if (!_res) _cb(new Error('El servicio asignado no existe'));
                             else {
-                                _cb(null, _res)
+                                _cb(null, false);
                             }
                         }).catch(err => {
                             _cb(err)

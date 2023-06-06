@@ -79,8 +79,7 @@ export default {
           } else {
             this.servicioRegistrado = true
             this.servicio["_id"] = res;
-            this.$servicios.push(this.servicio);
-            this.$emit('actualizaServicios');
+            this.$emit('addServicioEvent', this.servicio);
           }
         });
 

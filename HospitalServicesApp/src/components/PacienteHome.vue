@@ -60,7 +60,7 @@
         </md-app-drawer>
   
         <md-app-content>
-        <router-view :user="user"></router-view>
+        <router-view :servicioAsignado="servicioAsignadoSelected"></router-view>
       </md-app-content>
       </md-app>
     </div>
@@ -92,7 +92,8 @@
       return {
         menuVisible: ref(true),
         user: this.$user,
-        serviciosAsignados: this.$servicios
+        serviciosAsignados: this.$servicios,
+        servicioAsignadoSelected: {}
       };
     },
     mounted(){
@@ -110,11 +111,14 @@
         });
       },
       servicioAsignadoSeleccionado(servicioAsignado){
-        this.$router.push({name: "MedicionesServicio", params: {idServicio: servicioAsignado.servicio.nombre, servicioAsignado: servicioAsignado}}).catch(err => {
+        this.servicioAsignadoSelected = servicioAsignado;
+        console.log("selected"+this.servicioAsignadoSelected.servicio.nombre);
+        this.$router.push({name: "MedicionesServicio", params: {idServicio: this.servicioAsignadoSelected.servicio.nombre}}).catch(err => {
             console.log(err.name);
           });
       },
       logout() {
+        localStorage.removeItem('user');
         this.$user = {};
         this.$servicios = [];
         this.cambiaContenido("home");

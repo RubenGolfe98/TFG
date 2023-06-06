@@ -151,6 +151,7 @@ import { ref } from 'vue';
   export default {
     components: {},
     name: "HistoricoPaciente",
+    props: ['servicioAsignado'],
     data() {
       return {
         registroMedicion: false,
@@ -159,9 +160,13 @@ import { ref } from 'vue';
         },
         medicionRegistrada: false,
         search: null,
-        servicioAsignado: this.$route.params.servicioAsignado,
-        searched: ref(this.$route.params.servicioAsignado.mediciones),
+        searched: this.servicioAsignado.mediciones
       };
+    },
+    watch: {
+      servicioAsignado(){
+        this.searched = this.servicioAsignado.mediciones;
+      }
     },
     methods: {
         registrarMedicion(){

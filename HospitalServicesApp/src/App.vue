@@ -21,5 +21,11 @@ export default {
       user: this.$user
     }
   },
+  mounted(){
+    if (localStorage.getItem('user') !== null) {
+      this.$user = JSON.parse(localStorage.getItem('user'));
+      this.user = this.$user;
+    }
+  }
 };
 </script>

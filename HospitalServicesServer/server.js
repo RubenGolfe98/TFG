@@ -158,7 +158,7 @@ app.get('/hospitalServices/servicios/asignados/:idServicioAsignado', function (r
 // DELETE SERVICIO ASIGNADO (BORRADO LÓGICO)
 app.put('/hospitalServices/servicios/asignados/:idServicioAsignado', function (req, res) {
     console.log('update servicio asignado' + JSON.stringify(req.params.idServicioAsignado));
-    model.deleteServicioAsignado(req.body.token, req.params.idServicioAsignado, (err, servicioAsignado) => {
+    model.deleteServicioAsignado(req.body.params.token, req.body.params.idServicioAsignado, (err, servicioAsignado) => {
         if (err) {
             console.log(err.stack);
             res.status(400).send(err);

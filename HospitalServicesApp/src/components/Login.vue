@@ -75,10 +75,12 @@ export default {
           } else {
             this.$set(this.$user, "token", token);
             for (var att in usuario) this.$set(this.$user, att, usuario[att]);
+            localStorage.setItem('user', JSON.stringify(this.$user));
+            console.log("Usuario logeado");
           }
         }
       );
-      console.log("asd "+this.$user.dni);
+      
     },
   },
 };

@@ -1,7 +1,7 @@
 <template>
   <div id="servicio">
-    <h1>Servicio de {{ $route.params.servicio.nombre }}</h1>
-    <h4>{{ $route.params.servicio.descripcion }}</h4>
+    <h1>Servicio de {{ servicio.nombre }}</h1>
+    <h4>{{ servicio.descripcion }}</h4>
     <md-table v-model="searched" @md-selected="abrirHistoricoServicioAsignado" md-sort="name" md-sort-order="asc" md-card>
       <md-table-toolbar>
         <md-field md-clearable class="md-toolbar-section-start">
@@ -23,13 +23,13 @@
             'Se le ha asignado al paciente ' +
             this.nuevoServicioAsignado.paciente +
             ' el servicio de ' +
-            $route.params.servicio.nombre
+            servicio.nombre
           "
           @md-closed="resetServicioAsignado"
         />
         <md-dialog :md-active.sync="registroServicioAsignado" id="dialog">
           <md-dialog-title
-            >Asignar servicio de {{ $route.params.servicio.nombre }} a un
+            >Asignar servicio de {{ servicio.nombre }} a un
             paciente</md-dialog-title
           >
           <div class="icon-container">
@@ -59,7 +59,7 @@
                   </md-select>
                 </md-field>
               </div>
-              <h3>Establecer valor límite para la generación de una alarma (Unidades: {{ $route.params.servicio.unidades }})</h3>
+              <h3>Establecer valor límite para la generación de una alarma (Unidades: {{ servicio.unidades }})</h3>
               <div class="input-container">
                 <md-field>
                   <label>Valor</label>
@@ -165,14 +165,14 @@ const searchByDni = (items, term) => {
 
 export default {
   name: "Servicio",
-  props: ["user"],
+  props: ["servicio"],
   data() {
     return {
       registroServicioAsignado: false,
       tiempoValor: 1,
       tiempoUnidad: "h",
       nuevoServicioAsignado: {
-        servicio: this.$route.params.servicio._id,
+        servicio: this.servicio._id,
         fechaAlta: null,
         fechaBaja: null,
         proximaMedicion: null,
@@ -193,9 +193,14 @@ export default {
   mounted() {
     this.obtenerserviciosAsignados();
   },
+  watch: {
+    servicio(){
+      this.obtenerserviciosAsignados();
+    }
+  },
   methods: {
     abrirHistoricoServicioAsignado(paciente){
-      this.$model.getServicioAsignado(paciente._id, paciente.dni, this.$route.params.servicio._id, (err, servicioAsignado) => {
+      this.$model.getServicioAsignado(paciente._id, paciente.dni, this.servicio._id, (err, servicioAsignado) => {
           if (err) {
             alert("Error" + err.stack);
           } else {
@@ -211,11 +216,10 @@ export default {
         });
       },
     obtenerserviciosAsignados() {
-      console.log("Hola");
       this.$model.getPacientesServicioAsignado(
-        this.user.id,
-        this.user.dni,
-        this.$route.params.servicio._id,
+        this.$user.id,
+        this.$user.dni,
+        this.servicio._id,
         (err, serviciosAsignados) => {
           if (err) {
             alert("Error" + err.stack);
@@ -242,7 +246,7 @@ export default {
       this.nuevoServicioAsignado.proximaMedicion = new Date();
 
       this.$model.addServicioAsignado(
-        this.user.id,
+        this.$user.id,
         this.nuevoServicioAsignado,
         (err, paciente) => {
           if (err) {
@@ -259,13 +263,17 @@ export default {
     resetServicioAsignado() {
       this.servicioAsignadoRegistrado = false;
       this.nuevoServicioAsignado = {
-        nombre: "",
-        apellido1: "",
-        apellido2: "",
-        password: "",
-        dni: "",
-        esSanitario: false,
-        doctores: [],
+        servicio: this.servicio._id,
+        fechaAlta: null,
+        fechaBaja: null,
+        proximaMedicion: null,
+        intervalo: "",
+        valorMax: 0,
+        activo: true,
+        observaciones: "",
+        mediciones: [],
+        sanitarioResponsable: this.$user.dni,
+        paciente: "",
       };
     },
     buscaPaciente() {
