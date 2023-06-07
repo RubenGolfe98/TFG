@@ -37,13 +37,6 @@
               {{ user.nombre }}</span
             >
           </md-list-item>
-
-          <md-list-item @click="cambiaContenido('pendientes')">
-            <md-icon>pending_actions</md-icon>
-            <span class="md-list-item-text"
-              >Mediciones pendientes</span
-            >
-          </md-list-item>
         </md-list>
         <div class="horizontal-bar">
           <div class="horizontal-bar-item"></div>
@@ -107,6 +100,7 @@
           } else {
             this.$servicios = serviciosAsignados;
             this.serviciosAsignados = this.$servicios;
+
           }
         });
       },

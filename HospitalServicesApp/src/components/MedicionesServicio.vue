@@ -70,7 +70,7 @@
     <h3>Unidades: {{ servicioAsignado.servicio.unidades }}</h3>
     <md-table v-model="searched" md-sort="fechaRegistro" md-sort-order="desc" md-card>
         <md-table-toolbar>
-            <md-button class="md-raised md-accent" @click="registroMedicion = true">Registrar nueva medición</md-button>
+            <md-button class="md-raised md-accent" @click="registroMedicion = true" :disabled="!habilitarRegistro">Registrar nueva medición</md-button>
             <!-- REGISTRAR MEDICION -->
             <md-dialog-alert
                     :md-active.sync="medicionRegistrada"
@@ -163,7 +163,8 @@ import { ref } from 'vue';
         searched: this.servicioAsignado.mediciones,
         fechaBajaFormateada: this.formateaFechaYhora(this.servicioAsignado.fechaBaja),
         fechaAltaFormateada: this.formateaFechaYhora(this.servicioAsignado.fechaAlta),
-        proximaMedicionFormateada: this.formateaFechaYhora(this.servicioAsignado.proximaMedicion)
+        proximaMedicionFormateada: this.formateaFechaYhora(this.servicioAsignado.proximaMedicion),
+        habilitarRegistro: false,
       };
     },
     watch: {
@@ -172,9 +173,19 @@ import { ref } from 'vue';
         this.fechaBajaFormateada = this.formateaFechaYhora(this.servicioAsignado.fechaBaja)
         this.fechaAltaFormateada = this.formateaFechaYhora(this.servicioAsignado.fechaAlta)
         this.proximaMedicionFormateada = this.formateaFechaYhora(this.servicioAsignado.proximaMedicion)
+        this.comprobarRegistroNecesario();
       }
     },
     methods: {
+      comprobarRegistroNecesario(){
+        let fechaYhoraActual = new Date();
+        let proximaMedicion = new Date(this.servicioAsignado.proximaMedicion);
+        if(fechaYhoraActual.getTime() >= proximaMedicion.getTime()){
+          this.habilitarRegistro = true;
+        }else{
+          this.habilitarRegistro = false;
+        }
+      },
       formateaFechaYhora(fechaAformatear){
         if(fechaAformatear === null){
           return null;
@@ -192,7 +203,7 @@ import { ref } from 'vue';
         return fechaFormateada + ' ' + horaFormateada;
       },
       obtenerProximaMedicion(){
-        let prxMed = new Date(this.servicioAsignado.proximaMedicion)
+        let prxMed = new Date()
         let indice = 0;
         for (var i = 0; i < this.servicioAsignado.intervalo.length; i++) {
           if (isNaN(parseInt(this.servicioAsignado.intervalo[i]))) {
@@ -202,7 +213,6 @@ import { ref } from 'vue';
         }
         var valor = parseInt(this.servicioAsignado.intervalo.substring(0, indice));
         var intervalo = this.servicioAsignado.intervalo.substring(indice);
-        
         switch(intervalo){
           case 'h':
           prxMed.setHours(prxMed.getHours() + valor);
@@ -228,6 +238,7 @@ import { ref } from 'vue';
             this.searched.push(medicion);
             this.medicionRegistrada = true;
             this.registroMedicion = false;
+            this.habilitarRegistro = false;
           }
         });
         },
