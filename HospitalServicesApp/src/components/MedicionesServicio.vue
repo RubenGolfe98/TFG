@@ -24,7 +24,7 @@
                 <!-- FECHA ALTA -->
                 <md-field>
                     <label>Fecha de alta</label>
-                    <md-input :disabled="true" v-model="servicioAsignado.fechaAlta"></md-input>
+                    <md-input :disabled="true" v-model="fechaAltaFormateada"></md-input>
                 </md-field>
                 <!-- /FECHA ALTA -->
 
@@ -50,7 +50,7 @@
                 <!-- PROXIMA MEDICION -->
                 <md-field>
                     <label>Próxima medición</label>
-                    <md-input :disabled="true" v-model="servicioAsignado.proximaMedicion"></md-input>
+                    <md-input :disabled="true" v-model="proximaMedicionFormateada"></md-input>
                 </md-field>
                 <!-- /PROXIMA MEDICION -->
 
@@ -160,21 +160,71 @@ import { ref } from 'vue';
         },
         medicionRegistrada: false,
         search: null,
-        searched: this.servicioAsignado.mediciones
+        searched: this.servicioAsignado.mediciones,
+        fechaBajaFormateada: this.formateaFechaYhora(this.servicioAsignado.fechaBaja),
+        fechaAltaFormateada: this.formateaFechaYhora(this.servicioAsignado.fechaAlta),
+        proximaMedicionFormateada: this.formateaFechaYhora(this.servicioAsignado.proximaMedicion)
       };
     },
     watch: {
       servicioAsignado(){
         this.searched = this.servicioAsignado.mediciones;
+        this.fechaBajaFormateada = this.formateaFechaYhora(this.servicioAsignado.fechaBaja)
+        this.fechaAltaFormateada = this.formateaFechaYhora(this.servicioAsignado.fechaAlta)
+        this.proximaMedicionFormateada = this.formateaFechaYhora(this.servicioAsignado.proximaMedicion)
       }
     },
     methods: {
+      formateaFechaYhora(fechaAformatear){
+        if(fechaAformatear === null){
+          return null;
+        }
+        var proxMed = new Date(fechaAformatear);
+        var dia = proxMed.getDate();
+        var mes = proxMed.getMonth() + 1;
+        var anio = proxMed.getFullYear();
+        var horas = proxMed.getHours();
+        var minutos = proxMed.getMinutes();
+
+        var fechaFormateada = ('0' + dia).slice(-2) + '/' + ('0' + mes).slice(-2) + '/' + anio;
+        var horaFormateada = ('0' + horas).slice(-2) + ':' + ('0' + minutos).slice(-2);
+
+        return fechaFormateada + ' ' + horaFormateada;
+      },
+      obtenerProximaMedicion(){
+        let prxMed = new Date(this.servicioAsignado.proximaMedicion)
+        let indice = 0;
+        for (var i = 0; i < this.servicioAsignado.intervalo.length; i++) {
+          if (isNaN(parseInt(this.servicioAsignado.intervalo[i]))) {
+            indice = i;
+            break;
+          }
+        }
+        var valor = parseInt(this.servicioAsignado.intervalo.substring(0, indice));
+        var intervalo = this.servicioAsignado.intervalo.substring(indice);
+        
+        switch(intervalo){
+          case 'h':
+          prxMed.setHours(prxMed.getHours() + valor);
+            break;
+          case 'd':
+          prxMed.setDate(prxMed.getDate() + valor);
+            break;
+          case 's':
+          prxMed.setDate(prxMed.getDate() + 7);
+            break;   
+        }
+
+        return prxMed;
+      },
         registrarMedicion(){
             this.medicionNueva["fecha"] = new Date();
-            this.$model.addMedicion(this.$user.id, this.$user.dni, this.servicioAsignado._id, this.medicionNueva, (err, medicion) => {
+            let posibleProxMed = this.obtenerProximaMedicion();
+            this.$model.addMedicion(this.$user.id, this.$user.dni, this.servicioAsignado._id, this.medicionNueva, posibleProxMed, (err, medicion) => {
           if (err) {
             alert("Error" + err.stack);
           } else {
+            this.proximaMedicionFormateada = this.formateaFechaYhora(posibleProxMed);
             this.searched.push(medicion);
             this.medicionRegistrada = true;
             this.registroMedicion = false;

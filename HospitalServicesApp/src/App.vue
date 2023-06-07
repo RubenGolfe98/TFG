@@ -22,10 +22,11 @@ export default {
     }
   },
   mounted(){
-    if (localStorage.getItem('user') !== null) {
-      this.$user = JSON.parse(localStorage.getItem('user'));
-      this.user = this.$user;
-    }
+    //if (localStorage.getItem('user') !== null) {
+    //  this.$user = JSON.parse(localStorage.getItem('user'));
+    //  this.user = this.$user;
+    //  console.log(this.$user);
+    //}
   }
 };
 </script>

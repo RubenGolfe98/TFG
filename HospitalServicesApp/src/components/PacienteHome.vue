@@ -112,7 +112,6 @@
       },
       servicioAsignadoSeleccionado(servicioAsignado){
         this.servicioAsignadoSelected = servicioAsignado;
-        console.log("selected"+this.servicioAsignadoSelected.servicio.nombre);
         this.$router.push({name: "MedicionesServicio", params: {idServicio: this.servicioAsignadoSelected.servicio.nombre}}).catch(err => {
             console.log(err.name);
           });

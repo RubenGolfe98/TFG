@@ -141,10 +141,10 @@ function deleteServicioAsignado(token, idServicioAsignado, cb){
     });
 }
 
-function addMedicion(token, dniPaciente, idServicioAsignado, medicion, cb){
+function addMedicion(token, dniPaciente, idServicioAsignado, medicion, proximaMedicion, cb){
     axios.post(url + '/servicios/asignados/' + idServicioAsignado + '/mediciones',
     {
-        params: { token: token, dniPaciente: dniPaciente, idServicioAsignado: idServicioAsignado, medicion: medicion }
+        params: { token: token, dniPaciente: dniPaciente, idServicioAsignado: idServicioAsignado, medicion: medicion, proximaMedicion: proximaMedicion }
     }).then(res => {
         cb(null, res.data)
     }).catch(err => {

@@ -171,7 +171,7 @@ app.put('/hospitalServices/servicios/asignados/:idServicioAsignado', function (r
 // ADD MEDICIÓN
 app.post('/hospitalServices/servicios/asignados/:idServicioAsignado/mediciones', function (req, res) {
     console.log('add medición a un servicio asignado' + JSON.stringify(req.params.idServicioAsignado));
-    model.addMedicion(req.body.params.token, req.body.params.dniPaciente, req.body.params.idServicioAsignado, req.body.params.medicion, (err, medicion) => {
+    model.addMedicion(req.body.params.token, req.body.params.dniPaciente, req.body.params.idServicioAsignado, req.body.params.medicion, req.body.params.proximaMedicion, (err, medicion) => {
         if (err) {
             console.log(err.stack);
             res.status(400).send(err);
@@ -197,7 +197,7 @@ app.delete('/hospitalServices/servicios/asignados/:idServicioAsignado/mediciones
 // GET ALARMAS
 app.get('/hospitalServices/alarmas', function (req, res) {
     console.log('get alarmas');
-    model.getAlarmas(req.body.token, req.body.dniSanitario, (err, alarmas) => {
+    model.getAlarmas(req.query.token, req.query.dniSanitario, (err, alarmas) => {
         if (err) {
             console.log(err.stack);
             res.status(400).send(err);

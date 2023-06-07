@@ -39,8 +39,9 @@
           </md-list-item>
 
           <md-list-item @click="cambiaContenido('alarmas')">
-            <md-icon>notifications</md-icon>
+              <md-icon>notifications</md-icon>
             <span class="md-list-item-text">Alarmas</span>
+            <md-badge :md-content="numAlarmas" md-dense></md-badge>
           </md-list-item>
 
           <md-list-item @click="cambiaContenido('pacientes')">
@@ -104,13 +105,15 @@ export default {
   data() {
     return {
       user: this.$user,
+      alarmas: {},
+      numAlarmas: 0,
       menuVisible: ref(true),
       servicios: [],
       servicioSelected: {}
     };
   },
   mounted(){
-    this.getServicios();
+    this.getServiciosYalarmas();
   },
   methods: {
     servicioSeleccionado(servicio){
@@ -119,13 +122,21 @@ export default {
             console.log(err.name);
           });
     },
-    getServicios(){
+    getServiciosYalarmas(){
       console.log("USUARIO G: "+this.$user.dni);
       this.$model.getServiciosSanitario(this.$user.id, this.$user.dni, (err, servicios) => {
           if (err) {
             alert("Error" + err.stack);
           } else {
             this.servicios = servicios;
+            this.$model.getAlarmas(this.$user.id, this.$user.dni, (err, alarmas) => {
+              if(err){
+                alert("Error" + err.stack);
+              }else{
+                this.alarmas = alarmas;
+                this.numAlarmas = Object.keys(this.alarmas).length;
+              }
+            });
           }
         });
     },

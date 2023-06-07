@@ -200,7 +200,8 @@ function getPacientesPorServicioAsignado(token, dniSanitario, idServicio, cb) {
                     let serviciosAsignados = db.collection(SERVICIOS_ASIGNADOS_COLLECTION);
                     serviciosAsignados.find({
                         servicio: new mongodb.ObjectId(idServicio),
-                        sanitarioResponsable: dniSanitario
+                        sanitarioResponsable: dniSanitario,
+                        activo: true
                     }, { paciente: 0 }).toArray().then(_servAsigns => {
                         if (!_servAsigns) _cb(null, [])
                         else {
@@ -484,7 +485,7 @@ function deleteServicioAsignado(token, idServicioAsignado, cb) {
     }
 }
 
-function addMedicion(token, dniPaciente, idServicioAsignado, medicion, cb) {
+function addMedicion(token, dniPaciente, idServicioAsignado, medicion, proximaMedicion, cb) {
     if (!token) cb(new Error('Token missing'));
     else if (!dniPaciente) cb(new Error('DNI paciente missing'));
     else if (!idServicioAsignado) cb(new Error('ID Servicio asignado missing'));
@@ -522,9 +523,9 @@ function addMedicion(token, dniPaciente, idServicioAsignado, medicion, cb) {
                                         }
                                         alarmas.insertOne(alarma)
                                     }
-
+                                    proximaMedicion = new Date(proximaMedicion);
                                     //Registramos la medición
-                                    serviciosAsignados.updateOne({ _id: new mongodb.ObjectId(idServicioAsignado) }, { $push: { mediciones: medicion } }).then(_res => {
+                                    serviciosAsignados.updateOne({ _id: new mongodb.ObjectId(idServicioAsignado) }, {$set: {proximaMedicion: proximaMedicion}, $push: { mediciones: medicion } }).then(_res => {
                                         if (!_res) _cb(null, [])
                                         else {
                                             _cb(null, medicion)
@@ -625,8 +626,27 @@ function getAlarmas(token, dniSanitario, cb) {
                                 })
                                 if (idServicios != []) {
                                     let alarmas = db.collection(ALARMAS_COLLECTION);
-                                    alarmas.find({ servicioAsignado: { $in: idServicios } }).toArray().then(_alarmasFetched => {
-                                        if (_alarmasFetched) _cb(null, _alarmasFetched)
+                                    alarmas.find({ fechaGestionada: null, servicioAsignado: { $in: idServicios } }).toArray().then(_alarmasFetched => {
+                                        if (_alarmasFetched){
+
+                                            let servicios = db.collection(SERVICIOS_COLLECTION);
+                                            let resultado = _alarmasFetched;
+                                            let promises = resultado.map(alarm => {
+                                                return serviciosAsignados.findOne({ _id: alarm.servicioAsignado }).then(async _servAs => {
+
+                                                    await servicios.findOne({_id: _servAs.servicio}).then(serv => {
+                                                        _servAs.servicio = serv;
+                                                    });
+
+                                                    alarm.servicioAsignado = _servAs;
+                                                });
+                                            });
+
+                                            Promise.all(promises).then(() => {
+
+                                                _cb(null, resultado);
+                                            });
+                                        } 
                                         else _cb(null, [])
                                     }).catch(err => {
                                         _cb(err)
