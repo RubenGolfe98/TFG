@@ -10,6 +10,7 @@ import User from '@/components/User'
 import HistoricoPaciente from '@/components/HistoricoPaciente'
 import ServicioAsignadoInfo from '@/components/ServicioAsignadoInfo'
 import MedicionesServicio from '@/components/MedicionesServicio'
+import Alarmas from '@/components/Alarmas'
 
 Vue.use(Router)
 
@@ -28,6 +29,11 @@ export default new Router({
       path: '/sanitario/pacientes',
       name: 'Pacientes',
       component: Pacientes
+    },
+    {
+      path: '/sanitario/alarmas',
+      name: 'Alarmas',
+      component: Alarmas
     },
     {
       path: '/sanitario/pacientes/:dniPaciente',

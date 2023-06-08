@@ -9,7 +9,7 @@
       <md-card-content>
         <div class="form">
           <!-- DNI -->
-          <md-field md-inline>
+          <md-field md-inline >
             <label>DNI</label>
             <md-input id="dni" v-model="form.dni"></md-input>
           </md-field>
@@ -56,7 +56,7 @@ export default {
   }),
   validations: {
     form: {
-      id: {
+      dni: {
         required,
       }
     },

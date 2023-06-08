@@ -674,7 +674,7 @@ function getAlarmas(token, dniSanitario, cb) {
 
 function gestionarAlarma(token, alarma, cb) {
     if (!token) cb(new Error('Token missing'));
-    else if (!servicioAsignado) cb(new Error('Servicio asignado missing'));
+    else if (!alarma) cb(new Error('Alarma missing'));
     else {
         MongoClient.connect(url).then(client => {
             // create new callback for closing connection
@@ -690,7 +690,7 @@ function gestionarAlarma(token, alarma, cb) {
                 (_sanitario) => {
                     if (_sanitario) {
                         let alarmas = db.collection(ALARMAS_COLLECTION);
-                        alarmas.updateOne({ _id: alarma._id }, { fechaGestionada: new Date() }).then(
+                        alarmas.updateOne({ _id: new mongodb.ObjectId(alarma._id) }, { $set:{fechaGestionada: new Date(alarma.fechaGestionada) }}).then(
                             (_alarm) => {
                                 if (_alarm) {
                                     _cb(null, _alarm)

@@ -210,7 +210,7 @@ app.get('/hospitalServices/alarmas', function (req, res) {
 // UPDATE ALARMA
 app.put('/hospitalServices/alarmas/:idAlarma', function (req, res) {
     console.log('update alarma' + JSON.stringify(req.params.idAlarma));
-    model.gestionarAlarma(req.body.token, req.body.alarma, (err, alarma) => {
+    model.gestionarAlarma(req.body.params.token, req.body.params.alarma, (err, alarma) => {
         if (err) {
             console.log(err.stack);
             res.status(400).send(err);

@@ -41,7 +41,7 @@
           <md-list-item @click="cambiaContenido('alarmas')">
               <md-icon>notifications</md-icon>
             <span class="md-list-item-text">Alarmas</span>
-            <md-badge :md-content="numAlarmas" md-dense></md-badge>
+            <md-badge :md-content="numAlarmas" md-dense v-if="hayAlarmas"></md-badge>
           </md-list-item>
 
           <md-list-item @click="cambiaContenido('pacientes')">
@@ -70,7 +70,7 @@
       </md-app-drawer>
 
       <md-app-content>
-        <router-view @addServicioEvent="addServicio" :servicio="servicioSelected"></router-view>
+        <router-view @addServicioEvent="addServicio" @alarmasEvent="alarmaGestionada" :servicio="servicioSelected" :alarmas="alarmas"></router-view>
       </md-app-content>
     </md-app>
   </div>
@@ -109,13 +109,20 @@ export default {
       numAlarmas: 0,
       menuVisible: ref(true),
       servicios: [],
-      servicioSelected: {}
+      servicioSelected: {},
+      hayAlarmas: false
     };
   },
   mounted(){
     this.getServiciosYalarmas();
   },
   methods: {
+    alarmaGestionada(){
+      this.numAlarmas = this.numAlarmas - 1;
+      if(this.numAlarmas<=0){
+        this.hayAlarmas = false;
+      }
+    },
     servicioSeleccionado(servicio){
       this.servicioSelected = servicio;
       this.$router.push({name: "Servicio", params: {idServicioAsignado: servicio.nombre}}).catch(err => {
@@ -123,22 +130,27 @@ export default {
           });
     },
     getServiciosYalarmas(){
-      console.log("USUARIO G: "+this.$user.dni);
       this.$model.getServiciosSanitario(this.$user.id, this.$user.dni, (err, servicios) => {
           if (err) {
             alert("Error" + err.stack);
           } else {
             this.servicios = servicios;
-            this.$model.getAlarmas(this.$user.id, this.$user.dni, (err, alarmas) => {
+            this.getAlarmas();
+          }
+        });
+    },
+    getAlarmas(){
+      this.$model.getAlarmas(this.$user.id, this.$user.dni, (err, alarmas) => {
               if(err){
                 alert("Error" + err.stack);
               }else{
                 this.alarmas = alarmas;
                 this.numAlarmas = Object.keys(this.alarmas).length;
+                if(this.numAlarmas>0){
+                  this.hayAlarmas = true;
+                }
               }
             });
-          }
-        });
     },
     addServicio(servicio){
       this.servicios.push(servicio);
@@ -166,6 +178,10 @@ export default {
           });
           break;
         case "alarmas":
+          this.getAlarmas();
+        this.$router.push("/sanitario/alarmas").catch(err => {
+            console.log(err.name);
+          });
           break;
         case "pacientes":
           this.$router.push("/sanitario/pacientes").catch(err => {

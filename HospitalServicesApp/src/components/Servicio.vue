@@ -149,7 +149,7 @@
 
 
 <script>
-import { ref, watchEffect } from "vue";
+import { ref } from "vue";
 
 const toLower = (text) => {
   return text.toString().toLowerCase();
