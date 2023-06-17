@@ -3,7 +3,7 @@
       <h1>Lista de pacientes activos</h1>
         <md-table v-model="searched" @md-selected="abrirHistoricoPaciente" md-sort="name" md-sort-order="asc" md-card>
               <md-table-toolbar>
-                <md-field md-clearable class="md-toolbar-section-start">
+                <md-field md-clearable class="md-toolbar-section-start max-width">
                   <md-input placeholder="Buscar por dni..." v-model="search" @input="buscaPaciente" />
                   
                 </md-field>
@@ -194,3 +194,9 @@ export default {
   }
 };
 </script>
+
+<style>
+.max-width {
+  max-width: 300px; /* El valor del ancho máximo que desees */
+}
+</style>

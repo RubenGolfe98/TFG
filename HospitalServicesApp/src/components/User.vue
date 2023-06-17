@@ -14,23 +14,23 @@
         </div>
       </md-card-header>
       <md-card-content>
-        <div>
+        <div class="container">
           <!-- DNI -->
-          <md-field>
+          <md-field class="max-width">
             <label>DNI</label>
             <md-input :disabled="true" id="dni" v-model="user.dni"></md-input>
           </md-field>
           <!-- /DNI -->
 
           <!-- NOMBRE -->
-          <md-field>
+          <md-field class="max-width">
             <label>Nombre</label>
             <md-input :disabled="true" id="id" v-model="user.nombre"></md-input>
           </md-field>
           <!-- /NOMBRE -->
 
           <!-- APELLIDO1 -->
-          <md-field>
+          <md-field class="max-width">
             <label>Primer apellido</label>
             <md-input
               :disabled="true"
@@ -41,7 +41,7 @@
           <!-- /APELLIDO1 -->
 
           <!-- APELLIDO2 -->
-          <md-field>
+          <md-field class="max-width">
             <label>Segundo apellido</label>
             <md-input
               :disabled="true"
@@ -52,7 +52,7 @@
           <!-- /APELLIDO2 -->
 
           <!-- PASSWORD -->
-          <md-field>
+          <md-field class="max-width">
             <label>Password</label>
             <md-input v-model="newPassword" type="password"></md-input>
           </md-field>
@@ -107,4 +107,12 @@ export default {
   },
 };
 </script>
-  
+<style>
+.max-width {
+  max-width: 400px; /* El valor del ancho máximo que desees */
+}
+.container {
+  position: relative;
+}
+
+</style>

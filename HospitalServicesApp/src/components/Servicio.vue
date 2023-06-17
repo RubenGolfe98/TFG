@@ -4,7 +4,7 @@
     <h4>{{ servicio.descripcion }}</h4>
     <md-table v-model="searched" @md-selected="abrirHistoricoServicioAsignado" md-sort="name" md-sort-order="asc" md-card>
       <md-table-toolbar>
-        <md-field md-clearable class="md-toolbar-section-start">
+        <md-field md-clearable class="md-toolbar-section-start max-width">
           <md-input
             placeholder="Buscar por dni..."
             v-model="search"
@@ -143,6 +143,9 @@
 }
 .input-container md-field {
   flex: 1; /* Ocupa el espacio disponible */
+}
+.max-width {
+  max-width: 300px; /* El valor del ancho máximo que desees */
 }
 </style>
 

@@ -1,5 +1,25 @@
 <template>
   <div id="login">
+    <div class="table-container">
+      <table>
+        <tr>
+          <td>
+            <md-icon class="md-size-5x">local_hospital</md-icon>
+          </td>
+          <td>
+            <md-icon class="md-size-5x">notifications</md-icon>
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <md-icon class="md-size-5x">supervisor_account</md-icon>
+          </td>
+          <td>
+            <md-icon class="md-size-5x">medical_information</md-icon>
+          </td>
+        </tr>
+      </table>
+    </div>
     <md-card>
       <md-card-header>
         <div class="md-title">Login</div>
@@ -87,8 +107,16 @@ export default {
 </script>
   
   <style>
+  .table-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40vh; /* Ajusta la altura según tus necesidades */
+}
 #login {
   margin: 20%;
 }
+.max-width {
+  max-width: 300px; /* El valor del ancho máximo que desees */
+}
 </style>
-  

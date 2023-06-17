@@ -58,7 +58,7 @@
 
     <md-table v-model="searched" @md-selected="abrirHistoricoServicioAsignado" md-sort="fechaAlta" md-sort-order="desc" md-card>
               <md-table-toolbar>
-                <md-field md-clearable class="md-toolbar-section-start">
+                <md-field md-clearable class="md-toolbar-section-start max-width">
                   <md-input placeholder="Buscar por nombre de Servicio..." v-model="search" @input="buscaServicio" />
                   
                 </md-field>
@@ -110,6 +110,10 @@
   </style>
 
   <script>
+  const toLower = (text) => {
+  return text.toString().toLowerCase();
+};
+
 const searchByServicio = (items, term) => {
   if (term) {
     return items.filter((item) => toLower(item.servicio.nombre).includes(toLower(term)));
@@ -161,3 +165,8 @@ import { ref } from 'vue';
   };
   </script>
   
+  <style>
+.max-width {
+  max-width: 300px; /* El valor del ancho máximo que desees */
+}
+</style>
