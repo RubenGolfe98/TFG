@@ -30,8 +30,7 @@
         <md-dialog :md-active.sync="registroServicioAsignado" id="dialog">
           <md-dialog-title
             >Asignar servicio de {{ servicio.nombre }} a un
-            paciente</md-dialog-title
-          >
+            paciente</md-dialog-title>
           <div class="icon-container">
             <md-icon>medical_information</md-icon>
             <md-icon>person_add</md-icon>
@@ -99,9 +98,9 @@
 
       <md-table-empty-state
         md-label="No se han encontrado pacientes"
-        :md-description="`No se han encontrado pacientes con el dni '${search}'. Revisa el dni o da de alta al paciente.`"
+        :md-description="`No se han encontrado pacientes con el servicio de ${servicio.nombre} asignado.`"
       >
-        <md-button class="md-primary md-raised">Dar de alta paciente</md-button>
+        <md-button class="md-primary md-raised" @click="registroServicioAsignado = true">Asignar servicio de {{ servicio.nombre }} a un paciente</md-button>
       </md-table-empty-state>
       <md-table-row>
         <md-table-head>DNI</md-table-head>
@@ -202,11 +201,35 @@ export default {
     }
   },
   methods: {
+    formateaFechaYhora(fechaAformatear){
+        if(fechaAformatear === null){
+          return null;
+        }
+        var proxMed = new Date(fechaAformatear);
+        var dia = proxMed.getDate();
+        var mes = proxMed.getMonth() + 1;
+        var anio = proxMed.getFullYear();
+        var horas = proxMed.getHours();
+        var minutos = proxMed.getMinutes();
+
+        var fechaFormateada = ('0' + dia).slice(-2) + '/' + ('0' + mes).slice(-2) + '/' + anio;
+        var horaFormateada = ('0' + horas).slice(-2) + ':' + ('0' + minutos).slice(-2);
+
+        return fechaFormateada + ' ' + horaFormateada;
+      },
     abrirHistoricoServicioAsignado(paciente){
       this.$model.getServicioAsignado(paciente._id, paciente.dni, this.servicio._id, (err, servicioAsignado) => {
           if (err) {
             alert("Error" + err.stack);
           } else {
+              servicioAsignado["fechaAltaFormateada"] = this.formateaFechaYhora(servicioAsignado.fechaAlta);
+              servicioAsignado.mediciones.forEach((medicion) => {
+                medicion["fechaFormateada"] = this.formateaFechaYhora(medicion.fecha);
+              });
+              if(servicioAsignado.fechaBaja != null){
+                servicioAsignado["fechaBajaFormateada"] = this.formateaFechaYhora(servicioAsignado.fechaBaja);
+              }
+
             this.$router.push({name: "ServicioAsignadoInfo", params: {
               dniPaciente: paciente.dni, 
               idServicioAsignado: servicioAsignado.servicio.nombre, 
@@ -244,7 +267,7 @@ export default {
       return fechaActual;
     },
     registrarServicioAsignado() {
-      this.nuevoServicioAsignado.fechaAlta = this.obtenerFechaActual();
+      this.nuevoServicioAsignado.fechaAlta = new Date();
       this.nuevoServicioAsignado.intervalo = this.tiempoValor.toString()+this.tiempoUnidad;
       this.nuevoServicioAsignado.proximaMedicion = new Date();
 

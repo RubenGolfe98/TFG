@@ -14,7 +14,7 @@
                 <md-table-row slot="md-table-row" slot-scope="{ item }" md-selectable="single" >
                   <md-table-cell md-label="Servicio" md-sort-by="servicio">{{ item.servicioAsignado.servicio.nombre }}</md-table-cell>
                   <md-table-cell md-label="Paciente" md-sort-by="paciente">{{ item.servicioAsignado.paciente }}</md-table-cell>
-                  <md-table-cell md-label="Fecha de generación" md-sort-by="fechaGeneracion">{{ item.fechaGenerada }}</md-table-cell>
+                  <md-table-cell md-label="Fecha de generación" md-sort-by="fechaGeneracion">{{ item.fechaGeneradaFormateada }}</md-table-cell>
                 </md-table-row>
             </md-table>
     </div>

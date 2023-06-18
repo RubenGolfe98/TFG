@@ -38,14 +38,14 @@
                 <!-- FECHA ALTA -->
                 <md-field>
                     <label>Fecha de alta</label>
-                    <md-input :disabled="true" v-model="servicioAsignado.fechaAlta"></md-input>
+                    <md-input :disabled="true" v-model="servicioAsignado.fechaAltaFormateada"></md-input>
                 </md-field>
                 <!-- /FECHA ALTA -->
 
                 <!-- FECHA BAJA -->
                 <md-field>
                     <label>Fecha de baja</label>
-                    <md-input :disabled="true" v-model="servicioAsignado.fechaBaja"></md-input>
+                    <md-input :disabled="true" v-model="servicioAsignado.fechaBajaFormateada"></md-input>
                 </md-field>
                 <!-- /FECHA BAJA -->
             </div>
@@ -93,7 +93,7 @@
                 </md-table-row>
                 <md-table-row slot="md-table-row" slot-scope="{ item }" md-selectable="single">
                   <md-table-cell md-label="Valor" md-sort-by="valor">{{ item.valor }}</md-table-cell>
-                  <md-table-cell md-label="Fecha de registro" md-sort-by="fechaRegistro">{{ item.fecha }}</md-table-cell>
+                  <md-table-cell md-label="Fecha de registro" md-sort-by="fechaRegistro">{{ item.fechaFormateada }}</md-table-cell>
                   <md-table-cell md-label="¿Generó alarma?" md-sort-by="alarma">{{ item.alarma }}</md-table-cell>
                 </md-table-row>
       </md-table>

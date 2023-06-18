@@ -60,7 +60,6 @@
   <script>
 export default {
   components: {},
-  props: ["user"],
   name: "NuevoServicio",
   data: () => ({
     servicioRegistrado: false,
@@ -72,7 +71,7 @@ export default {
   }),
   methods: {
     registrarServicio(){
-        this.$model.addServicio(this.user.id, this.servicio, this.user.dni, 
+        this.$model.addServicio(this.$user.id, this.servicio, this.$user.dni, 
         (err, res) => {
           if (err) {
             alert("Error" + err.stack);

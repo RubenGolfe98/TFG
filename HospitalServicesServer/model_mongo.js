@@ -401,6 +401,7 @@ function addServicioAsignado(token, servicioAsignado, cb) {
     else if (!servicioAsignado.valorMax) cb(new Error('Valor maximo missing'));
     else if (!servicioAsignado.observaciones) cb(new Error('Observaciones missing'));
     else {
+        servicioAsignado["fechaAlta"] = new Date(servicioAsignado["fechaAlta"]);
         MongoClient.connect(url).then(client => {
             // create new callback for closing connection
             _cb = function (err, res) {

@@ -117,6 +117,22 @@ export default {
     this.getServiciosYalarmas();
   },
   methods: {
+    formateaFechaYhora(fechaAformatear){
+        if(fechaAformatear === null){
+          return null;
+        }
+        var proxMed = new Date(fechaAformatear);
+        var dia = proxMed.getDate();
+        var mes = proxMed.getMonth() + 1;
+        var anio = proxMed.getFullYear();
+        var horas = proxMed.getHours();
+        var minutos = proxMed.getMinutes();
+
+        var fechaFormateada = ('0' + dia).slice(-2) + '/' + ('0' + mes).slice(-2) + '/' + anio;
+        var horaFormateada = ('0' + horas).slice(-2) + ':' + ('0' + minutos).slice(-2);
+
+        return fechaFormateada + ' ' + horaFormateada;
+      },
     alarmaGestionada(){
       this.numAlarmas = this.numAlarmas - 1;
       if(this.numAlarmas<=0){
@@ -147,6 +163,9 @@ export default {
                 this.alarmas = alarmas;
                 this.numAlarmas = Object.keys(this.alarmas).length;
                 if(this.numAlarmas>0){
+                  this.alarmas.forEach((alarma) => {
+                    alarma["fechaGeneradaFormateada"] = this.formateaFechaYhora(alarma.fechaGenerada);
+                  });
                   this.hayAlarmas = true;
                 }
               }

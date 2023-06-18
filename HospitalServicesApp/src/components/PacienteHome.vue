@@ -93,14 +93,38 @@
       this.getServicios();
     },
     methods: {
+      formateaFechaYhora(fechaAformatear){
+        if(fechaAformatear === null){
+          return null;
+        }
+        var proxMed = new Date(fechaAformatear);
+        var dia = proxMed.getDate();
+        var mes = proxMed.getMonth() + 1;
+        var anio = proxMed.getFullYear();
+        var horas = proxMed.getHours();
+        var minutos = proxMed.getMinutes();
+
+        var fechaFormateada = ('0' + dia).slice(-2) + '/' + ('0' + mes).slice(-2) + '/' + anio;
+        var horaFormateada = ('0' + horas).slice(-2) + ':' + ('0' + minutos).slice(-2);
+
+        return fechaFormateada + ' ' + horaFormateada;
+      },
       getServicios(){
         this.$model.getServiciosAsignadosPaciente(this.$user.id, this.$user.dni, {activo: true}, (err, serviciosAsignados) => {
           if (err) {
             alert("Error" + err.stack);
           } else {
+            serviciosAsignados.forEach((servicioAsignado) => {
+              servicioAsignado["fechaAltaFormateada"] = this.formateaFechaYhora(servicioAsignado.fechaAlta);
+              servicioAsignado.mediciones.forEach((medicion) => {
+                medicion["fechaFormateada"] = this.formateaFechaYhora(medicion.fecha);
+              });
+              if(servicioAsignado.fechaBaja != null){
+                servicioAsignado["fechaBajaFormateada"] = this.formateaFechaYhora(servicioAsignado.fechaBaja);
+              }
+            });
             this.$servicios = serviciosAsignados;
             this.serviciosAsignados = this.$servicios;
-
           }
         });
       },

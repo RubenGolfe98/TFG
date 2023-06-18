@@ -118,7 +118,7 @@
                 </md-table-row>
                 <md-table-row slot="md-table-row" slot-scope="{ item }" md-selectable="single">
                   <md-table-cell md-label="Valor" md-sort-by="valor">{{ item.valor }}</md-table-cell>
-                  <md-table-cell md-label="Fecha de registro" md-sort-by="fechaRegistro">{{ item.fecha }}</md-table-cell>
+                  <md-table-cell md-label="Fecha de registro" md-sort-by="fechaRegistro">{{ item.fechaFormateada }}</md-table-cell>
                 </md-table-row>
       </md-table>
     </div>
@@ -146,12 +146,13 @@
 
   <script>
 
-import { ref } from 'vue';
-
   export default {
     components: {},
     name: "HistoricoPaciente",
     props: ['servicioAsignado'],
+    mounted(){
+      this.habilitarRegistro = this.comprobarRegistroNecesario();
+    },
     data() {
       return {
         registroMedicion: false,
@@ -164,7 +165,7 @@ import { ref } from 'vue';
         fechaBajaFormateada: this.formateaFechaYhora(this.servicioAsignado.fechaBaja),
         fechaAltaFormateada: this.formateaFechaYhora(this.servicioAsignado.fechaAlta),
         proximaMedicionFormateada: this.formateaFechaYhora(this.servicioAsignado.proximaMedicion),
-        habilitarRegistro: false,
+        habilitarRegistro: this.comprobarRegistroNecesario(),
       };
     },
     watch: {
@@ -234,6 +235,7 @@ import { ref } from 'vue';
           if (err) {
             alert("Error" + err.stack);
           } else {
+            medicion["fechaFormateada"] = this.formateaFechaYhora(medicion.fecha);
             this.proximaMedicionFormateada = this.formateaFechaYhora(posibleProxMed);
             this.searched.push(medicion);
             this.medicionRegistrada = true;

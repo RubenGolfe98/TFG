@@ -81,8 +81,8 @@
                 <md-table-row slot="md-table-row" slot-scope="{ item }" md-selectable="single">
                   <md-table-cell md-label="Nombre" md-sort-by="nombre">{{ item.servicio.nombre }}</md-table-cell>
                   <md-table-cell md-label="Sanitario responsable" md-sort-by="sanitario">{{ item.sanitarioResponsable }}</md-table-cell>
-                  <md-table-cell md-label="Fecha de alta" md-sort-by="fechaAlta">{{ item.fechaAlta }}</md-table-cell>
-                  <md-table-cell md-label="Fecha de baja" md-sort-by="fechaBaja">{{ item.fechaBaja }}</md-table-cell>
+                  <md-table-cell md-label="Fecha de alta" md-sort-by="fechaAlta">{{ item.fechaAltaFormateada }}</md-table-cell>
+                  <md-table-cell md-label="Fecha de baja" md-sort-by="fechaBaja">{{ item.fechaBajaFormateada }}</md-table-cell>
                   
                 </md-table-row>
       </md-table>
@@ -138,11 +138,36 @@ import { ref } from 'vue';
       this.getServiciosAsignadosPaciente();
     },
     methods: {
+      formateaFechaYhora(fechaAformatear){
+        if(fechaAformatear === null){
+          return null;
+        }
+        var proxMed = new Date(fechaAformatear);
+        var dia = proxMed.getDate();
+        var mes = proxMed.getMonth() + 1;
+        var anio = proxMed.getFullYear();
+        var horas = proxMed.getHours();
+        var minutos = proxMed.getMinutes();
+
+        var fechaFormateada = ('0' + dia).slice(-2) + '/' + ('0' + mes).slice(-2) + '/' + anio;
+        var horaFormateada = ('0' + horas).slice(-2) + ':' + ('0' + minutos).slice(-2);
+
+        return fechaFormateada + ' ' + horaFormateada;
+      },
       getServiciosAsignadosPaciente(){
         this.$model.getServiciosAsignadosPaciente(this.$route.params.pacienteSel._id, this.$route.params.pacienteSel.dni, {}, (err, serviciosAsignados) => {
           if (err) {
             alert("Error" + err.stack);
           } else {
+            serviciosAsignados.forEach((servicioAsignado) => {
+              servicioAsignado["fechaAltaFormateada"] = this.formateaFechaYhora(servicioAsignado.fechaAlta);
+              servicioAsignado.mediciones.forEach((medicion) => {
+                medicion["fechaFormateada"] = this.formateaFechaYhora(medicion.fecha);
+              });
+              if(servicioAsignado.fechaBaja != null){
+                servicioAsignado["fechaBajaFormateada"] = this.formateaFechaYhora(servicioAsignado.fechaBaja);
+              }
+            });
             this.serviciosAsignados = serviciosAsignados;
             this.searched = this.serviciosAsignados;
           }
